@@ -4,7 +4,7 @@ End-to-end data pipeline and analytics project analyzing global Data job market 
 
 ## 📁 Project Folder Structure
 ```
-FINAL_PROJECT/
+data_industry_insights_2020-2025/
 │
 ├── app/                                # Streamlit application (UI)
 │   └── app.py
