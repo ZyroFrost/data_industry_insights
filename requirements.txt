@@ -1,5 +1,0 @@
-pip install requests
-pip install pandas
-pip install python-dotenv
-pip install openpyxl
-pip install streamlit
