@@ -112,7 +112,6 @@ CREATE TABLE role_names (
         employment_type IN (
             'Full-time',
             'Part-time',
-            'Contract',
             'Internship',
             'Temporary'
         )

@@ -1,6 +1,6 @@
 {
-  "source_file": "adzuna_datajobs_2025.csv",
-  "active_source_columns": 19,
+  "source_file": "remoteok_datajobs_2025.csv",
+  "active_source_columns": 9,
   "erd_total": 27,
   "erd_missing": [
     "skill_name",
@@ -8,13 +8,18 @@
     "certification_required",
     "company_size",
     "industry",
+    "country_iso",
+    "latitude",
+    "longitude",
     "population",
     "level",
     "department",
+    "employment_type",
     "skill_level_required",
+    "min_salary",
+    "max_salary",
     "currency",
     "required_exp_years",
-    "education_level",
-    "remote_option"
+    "education_level"
   ]
 }

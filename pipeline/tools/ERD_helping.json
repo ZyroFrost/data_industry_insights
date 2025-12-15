@@ -1,0 +1,19 @@
+{
+    "___schema_info": "File này chỉ chứa các field cho lựa chọn hỗ trợ mapping, ví dụ như salary_min_max cho chọn và hệ thống sẽ tự split thành 2 cột min và max",
+    "___schema_info2": "Các field trong đây ko có trong ERD thật (nằm ở file ERD_schema) trong DB",
+
+    "salary_min_max": {
+    "table": "Jobs",
+    "type": "string",
+    "ingestion": true,
+    "description": "Cột đặc biệt chứa cả min-max lương, dùng để tách min và max khi export, không lưu trong dữ liệu mapped",
+    "required": true,
+    "derive_to": ["salary_min", "salary_max"]
+    },
+
+    "location_city_country": {
+    "type": "string",
+    "description": "Cột chứa cả city và country. Dùng để tách ra city và country khi export. Không lưu field này vào dữ liệu mapped.",
+    "derive_to": ["city", "country"]
+  }
+ }

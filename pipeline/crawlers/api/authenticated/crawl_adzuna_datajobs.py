@@ -29,7 +29,6 @@ RAW_DIR.mkdir(parents=True, exist_ok=True)
 PROCESSING_DIR.mkdir(parents=True, exist_ok=True)
 METADATA_DIR.mkdir(parents=True, exist_ok=True)
 
-
 # =========================================================
 # 1. LIST 40 COUNTRIES
 # =========================================================

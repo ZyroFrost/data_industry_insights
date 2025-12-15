@@ -1,20 +1,24 @@
 {
-  "source_file": "adzuna_datajobs_2025.csv",
-  "active_source_columns": 19,
+  "source_file": "ds_salaries_2020-2022.csv",
+  "active_source_columns": 11,
   "erd_total": 27,
   "erd_missing": [
     "skill_name",
     "skill_category",
     "certification_required",
-    "company_size",
+    "company_name",
     "industry",
+    "city",
+    "country_iso",
+    "latitude",
+    "longitude",
     "population",
     "level",
     "department",
     "skill_level_required",
-    "currency",
-    "required_exp_years",
+    "min_salary",
+    "max_salary",
     "education_level",
-    "remote_option"
+    "job_description"
   ]
 }

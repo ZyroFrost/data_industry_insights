@@ -1,13 +1,12 @@
 # This file count all csv files in the data_processing folder and print the result
 # Read columns and testing merged data
 
-import os
 import pandas as pd
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
-DATA_DIR = ROOT / "data" / "data_processing"
+DATA_DIR = ROOT / "data" / "data_processing" / "data_extracted"
 
 import pandas as pd
 
