@@ -3,6 +3,7 @@
   "active_source_columns": 11,
   "erd_total": 27,
   "erd_missing": [
+    "__source_id",
     "skill_name",
     "skill_category",
     "certification_required",

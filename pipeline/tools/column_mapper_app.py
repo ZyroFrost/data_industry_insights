@@ -1,3 +1,55 @@
+# -*- coding: utf-8 -*-
+"""
+STEP 2.0 – COLUMN MAPPING TO ERD SCHEMA (INTERACTIVE TOOL)
+
+This Streamlit application is used to map extracted raw datasets
+to the official ERD / ingestion schema of the project.
+
+Purpose:
+- Convert heterogeneous source CSV files into a unified ingestion format
+- Ensure all datasets conform to the same ERD schema before enrichment
+- Reduce manual preprocessing effort via rule-based + similarity-based suggestions
+
+Core functionalities:
+1. Load extracted datasets from:
+   - data/data_processing/s1_data_extracted/
+
+2. Display ERD schema and helping schema for reference:
+   - ERD_schema.json        (official ingestion fields)
+   - ERD_helping.json       (helper fields for auto-derivation)
+
+3. Automatically suggest mappings using:
+   - Rule-based alias matching
+   - Text similarity heuristics
+   - Whitelisted semantic rules (salary, location, date, etc.)
+
+4. Allow manual mapping, dropping, undoing, and resetting of columns
+5. Validate mapping completeness and detect duplicate ERD assignments
+6. Export mapped dataset with:
+   - All ERD fields present
+   - Missing fields filled with "__NA__"
+   - Derived fields auto-generated where applicable
+
+Input:
+- data/data_processing/s1_data_extracted/*.csv
+
+Output:
+- data/data_processing/s2.1_data_mapped/mapped_*.csv
+  (UTF-8-SIG encoded for Excel compatibility)
+- data/metadata/mapping/*_mapping_report.json
+
+Pipeline context:
+- This step belongs to STEP 2 – DATA PROCESSING
+- It must be completed before any enrichment steps (STEP 2.2+)
+- Output files from this step are the ONLY valid inputs for geo, role,
+  and other reference-based enrichment processes
+
+Notes:
+- This tool does NOT perform geo enrichment or normalization
+- City, country, role name, and other standardizations are handled
+  in later processing steps
+"""
+
 import streamlit as st
 import pandas as pd
 import json
@@ -12,8 +64,8 @@ ROOT = Path(__file__).resolve().parents[2]
 SCHEMA_PATH = ROOT / "pipeline" / "tools" / "ERD_schema.json" # REAL SCHEMA
 HELPING_SCHEMA_PATH = ROOT / "pipeline" / "tools" / "ERD_helping.json" # HELPING SCHEMA
 
-INPUT_DIR = ROOT / "data" / "data_processing" / "data_extracted"
-OUTPUT_DIR = ROOT / "data" / "data_processing" / "data_mapped"
+INPUT_DIR = ROOT / "data" / "data_processing" / "s1_data_extracted"
+OUTPUT_DIR = ROOT / "data" / "data_processing" / "s2.1_data_mapped"
 MAPPING_REPORT_DIR = ROOT / "data" / "metadata" / "mapping"
 NA_VALUE = "__NA__"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
@@ -743,8 +795,8 @@ if export_clicked:
     # ----------------------------------
     # 4. SAVE FILE
     # ----------------------------------
-    output_path = OUTPUT_DIR / f"mapped_{selected_file.stem}.xlsx"
-    df_out.to_excel(output_path, index=False, engine="openpyxl")
+    output_path = OUTPUT_DIR / f"mapped_{selected_file.stem}.csv"
+    df_out.to_csv(output_path, index=False, encoding="utf-8-sig")
 
     # ----------------------------------
     # 5. SAVE MAPPING REPORT
