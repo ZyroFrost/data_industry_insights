@@ -1,12 +1,10 @@
 {
   "source_file": "ds_salaries_2020-2022.csv",
   "active_source_columns": 11,
-  "erd_total": 27,
+  "erd_total": 25,
   "erd_missing": [
-    "__source_id",
     "skill_name",
     "skill_category",
-    "certification_required",
     "company_name",
     "industry",
     "city",
@@ -15,7 +13,6 @@
     "longitude",
     "population",
     "level",
-    "department",
     "skill_level_required",
     "min_salary",
     "max_salary",

@@ -1,0 +1,10 @@
+currency,aliases
+USD,"usd | us$ | $ | dollar | dollars | us dollar | united states dollar"
+EUR,"eur | € | euro | euros"
+GBP,"gbp | £ | pound | pounds | british pound"
+JPY,"jpy | ¥ | yen | japanese yen"
+AUD,"aud | a$ | australian dollar"
+CAD,"cad | c$ | canadian dollar"
+CHF,"chf | swiss franc | franken"
+INR,"inr | ₹ | rupee | rupees"
+PLN,"pln | zloty | zł"

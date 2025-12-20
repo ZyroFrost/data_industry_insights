@@ -29,12 +29,7 @@
       "Analytics"
     ]
   },
-  "certification_required": {
-    "table": "Skills",
-    "type": "boolean",
-    "default": false,
-    "description": "Job có yêu cầu chứng chỉ cho kỹ năng này hay không (vd: AWS Certified, GCP Professional)"
-  },
+
   "company_name": {
     "table": "Companies",
     "type": "string",
@@ -121,11 +116,7 @@
     "type": "string",
     "enum": ["Intern", "Junior", "Mid", "Senior", "Lead"]
   },
-  "department": {
-    "table": "Role_Names",
-    "type": "string",
-    "enum": ["Data", "Engineering", "Analytics", "IT", "Product", "Business"]
-  },
+
   "employment_type": {
     "table": "Role_Names",
     "type": "string",

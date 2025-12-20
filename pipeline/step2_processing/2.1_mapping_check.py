@@ -1,12 +1,23 @@
 # -*- coding: utf-8 -*-
 """
-STEP 2.0 – Use Mapping Tool to Map CSV Columns to ERD Schema (tools/column_mapper_app.py)
-STEP 2.1 – Mapping Check (this step)
+STEP 2.0 – COLUMN MAPPING (Interactive Tool)
+    tools/column_mapper_app.py
+
+STEP 2.1 – MAPPING COVERAGE CHECK (this step)
+
+This step verifies that all extracted datasets have been
+successfully mapped to the ERD ingestion schema using STEP 2.0.
 
 Purpose:
-- Simple mapping coverage check
-- Count extracted files vs mapped files
-- Fail if any extracted file has not been mapped
+- Ensure STEP 2.0 (column mapping) has been completed
+- Check 1–1 correspondence between extracted files and mapped files
+- Prevent downstream processing if any dataset is still unmapped
+- Act as a pipeline guard before STEP 2.2 (description extraction)
+
+Behavior:
+- Count extracted files
+- Count mapped files
+- Fail immediately if any extracted file is missing a mapped version
 """
 
 import sys

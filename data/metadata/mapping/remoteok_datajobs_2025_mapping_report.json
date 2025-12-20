@@ -1,11 +1,10 @@
 {
   "source_file": "remoteok_datajobs_2025.csv",
   "active_source_columns": 9,
-  "erd_total": 27,
+  "erd_total": 25,
   "erd_missing": [
     "skill_name",
     "skill_category",
-    "certification_required",
     "company_size",
     "industry",
     "country_iso",
@@ -13,7 +12,6 @@
     "longitude",
     "population",
     "level",
-    "department",
     "employment_type",
     "skill_level_required",
     "min_salary",

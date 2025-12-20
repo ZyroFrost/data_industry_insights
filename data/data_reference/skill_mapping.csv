@@ -1,0 +1,35 @@
+canonical_skill,skill_category,aliases,strong_terms,exclude_terms
+Python,Programming,"python | python3 | py","pandas | numpy | flask | django | sklearn","snake | monty"
+R,Programming," r | rlang | rstudio","ggplot | dplyr | tidyverse","are | role"
+Java,Programming,"java","spring | jvm","javascript"
+Scala,Programming,"scala","spark | sbt","scalar"
+
+SQL,Database,"sql | mysql | postgresql | postgres | mssql","select | join | group by","nosql | injection"
+
+Spark,Data Engineering,"spark | pyspark","rdd | dataframe | spark sql","fire | ignition"
+Airflow,Data Engineering,"airflow | apache airflow","dag | scheduler | task","ventilation"
+Kafka,Data Engineering,"kafka","stream | producer | consumer","writer"
+Hadoop,Data Engineering,"hadoop","hdfs | yarn","elephant"
+dbt,Data Engineering,"dbt | data build tool","models | transformations","debt"
+
+AWS,Cloud,"aws | amazon web services","ec2 | s3 | lambda | glue","warehouse"
+Azure,Cloud,"azure | microsoft azure","data factory | synapse","color"
+GCP,Cloud,"gcp | google cloud","bigquery | pubsub","gpu"
+
+Docker,DevOps,"docker","container | image","harbor"
+Kubernetes,DevOps,"kubernetes | k8s","pod | cluster","sailing"
+Terraform,DevOps,"terraform","infrastructure as code","land"
+CI/CD,DevOps,"ci/cd | cicd","pipeline | automation","credit"
+
+Tableau,Visualization,"tableau","dashboard | visualization","table"
+Power BI,Visualization,"power bi | powerbi","dashboard | dax","electric | battery"
+Looker,Visualization,"looker","explore | lookml","viewer"
+Superset,Visualization,"superset","dashboard","supplement"
+
+Machine Learning,Machine Learning,"machine learning | ml","model | training | prediction","marketing"
+Deep Learning,Machine Learning,"deep learning | dl","neural | cnn | rnn","learning curve"
+NLP,Machine Learning,"nlp | natural language processing","text | language model","neuro linguistic"
+Computer Vision,Machine Learning,"computer vision | cv","image | object detection","resume"
+
+Statistics,Analytics,"statistics | statistical","hypothesis | regression","status"
+A/B Testing,Analytics,"ab testing | a/b testing","experiment | variant","alphabet"

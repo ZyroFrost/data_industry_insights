@@ -1,17 +1,15 @@
 {
   "source_file": "DataScientist.csv",
   "active_source_columns": 16,
-  "erd_total": 27,
+  "erd_total": 25,
   "erd_missing": [
     "skill_name",
     "skill_category",
-    "certification_required",
     "country_iso",
     "latitude",
     "longitude",
     "population",
     "level",
-    "department",
     "employment_type",
     "skill_level_required",
     "posted_date",
