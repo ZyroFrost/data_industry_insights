@@ -17,18 +17,11 @@ IMPORTANT RULES:
 2. NEVER override existing structured data
 3. Cannot extract → stay silent (no INVALID, no guess)
 
-PIPELINE:
-STEP 2:
-- STEP 2.1 – Column mapping
-- STEP 2.2 – Description signal extraction (this step)
-- STEP 2.3 – City alias normalization
-- STEP 2.4 – Geo enrichment
-
 INPUT:
 - data/data_processing/s2.1_data_mapped/*.csv or *.xlsx
 
 OUTPUT:
-- data/data_processing/s2.2_data_description_extracted/extracted_desc_*.csv
+- data/data_processing/s2.2_data_description_extracted/extracted_*.csv
 """
 
 import pandas as pd
@@ -695,13 +688,10 @@ def extract_from_description(file_path: Path):
                 filled_employment += 1
 
         # -------- JOB LEVEL (FROM DESCRIPTION) --------
-        if (
-            "level" in df.columns
-            and df.at[i, "level"] == NA_VALUE
-        ):
+        if "job_level" in df.columns and df.at[i, "job_level"] == NA_VALUE:
             lvl = extract_job_level(desc_lower)
             if lvl != NA_VALUE:
-                df.at[i, "level"] = lvl
+                df.at[i, "job_level"] = lvl
                 filled_level += 1
 
     # =========================

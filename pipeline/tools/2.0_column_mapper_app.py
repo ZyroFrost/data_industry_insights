@@ -135,7 +135,7 @@ RULE_BASED_MAP = {
 
     # Role_Names table
     "role_name": ["role","title","job_title","job title","position","job_title_short"],
-    "level": ["level","job_level","role_level","seniority_level"],
+    "job_level": ["level","job_level","role_level","seniority_level"],
     "employment_type": ["employment_type","employment type","contract_time","job_type","work_type","job_schedule_type"],
 
     # Job_Skills table

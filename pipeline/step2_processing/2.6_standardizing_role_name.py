@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 STEP 2.6 – ROLE NAME STANDARDIZATION
+- Standardize role_name using reference taxonomy
+- Normalize text (remove accents, punctuation, numbers)
 """
 
 import pandas as pd

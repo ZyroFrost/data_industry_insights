@@ -1,6 +1,6 @@
 {
   "source_file": "canada_government_datajobs_2020-2025.csv",
-  "active_source_columns": 12,
+  "active_source_columns": 11,
   "erd_total": 25,
   "erd_missing": [
     "skill_name",
@@ -13,7 +13,7 @@
     "latitude",
     "longitude",
     "population",
-    "level",
+    "job_level",
     "employment_type",
     "skill_level_required",
     "min_salary",

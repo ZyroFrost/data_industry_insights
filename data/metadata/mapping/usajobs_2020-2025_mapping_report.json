@@ -11,7 +11,7 @@
     "latitude",
     "longitude",
     "population",
-    "level",
+    "job_level",
     "employment_type",
     "skill_level_required",
     "posted_date",

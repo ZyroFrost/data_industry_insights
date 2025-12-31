@@ -4,11 +4,12 @@
   "erd_total": 25,
   "erd_missing": [
     "company_size",
+    "industry",
     "country_iso",
     "latitude",
     "longitude",
     "population",
-    "level",
+    "job_level",
     "skill_level_required",
     "min_salary",
     "max_salary",

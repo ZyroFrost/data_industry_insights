@@ -27,7 +27,7 @@ TABLE_MAPPINGS = {
     "companies.csv": {
         "table": "companies",
         "id_column": "company_id",
-        "columns": ["company_name", "size", "industry"]
+        "columns": ["company_name", "company_size", "industry"]
     },
     "locations.csv": {
         "table": "locations",
@@ -59,7 +59,7 @@ TABLE_MAPPINGS = {
     "job_levels.csv": {
         "table": "job_levels",
         "id_column": None,
-        "columns": ["job_id", "level"]
+        "columns": ["job_id", "job_level"]
     },
     "job_skills.csv": {
         "table": "job_skills",

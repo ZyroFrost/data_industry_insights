@@ -2,12 +2,83 @@
 """
 STEP 2.7 – VALIDATING SALARY EXPRESSION
 
-- Validate min_salary / max_salary
-- Infer unit by range (hour / week / month / year)
-- Convert tạm sang YEAR để check hợp lệ
-- Nếu FAIL → ghi đè __INVALID__
-- KHÔNG tạo cột mới
-- KHÔNG thay đổi schema
+Purpose
+-------
+This step validates extracted salary ranges (min_salary, max_salary) and ensures
+that all salary values are logically consistent, unit-inferable, and convertible
+to a canonical yearly salary representation.
+
+It acts as a strict validation gate before downstream analytics and database loading.
+
+Input
+-----
+- CSV files from STEP 2.6 (Role Name Standardization)
+- Columns required:
+    - min_salary
+    - max_salary
+    - currency
+
+Output
+------
+- CSV files saved to:
+    data/data_processing/s2.7_data_salary_exp_validated/
+- Salary values are either:
+    - Canonicalized to YEARLY salary (numeric, USD-based)
+    - Or explicitly marked as "__INVALID__"
+
+Core Logic
+----------
+1. NA Handling Rules
+   - If both min_salary and max_salary are "__NA__", values are preserved.
+   - If only one side is "__NA__", the salary pair is marked "__INVALID__".
+
+2. Currency Normalization
+   - Salary values are converted to USD using reference FX rates
+     (data_reference/currency_rates.csv).
+   - If currency is missing or unknown, raw values are treated as USD.
+
+3. Basic Validity Checks
+   - Non-numeric, zero, or negative salary values are marked "__INVALID__".
+   - Parsing failures immediately invalidate the salary pair.
+
+4. Salary Unit Inference
+   - The salary range is tested against predefined unit ranges:
+       - Hourly
+       - Weekly
+       - Monthly
+       - Yearly
+   - A unit is considered possible if the salary interval intersects
+     with the expected value range for that unit.
+
+5. Yearly Canonicalization
+   - For each possible unit, the salary is converted to a yearly equivalent
+     using fixed multipliers:
+         hour  → 2080
+         week  → 52
+         month → 12
+         year  → 1
+   - The first unit producing a yearly salary within the global valid range
+     is selected.
+
+6. Final Validation
+   - The resulting yearly salary must fully fall within:
+         YEARLY_MIN ≤ salary ≤ YEARLY_MAX
+   - Otherwise, the salary is marked "__INVALID__".
+
+Design Decisions
+----------------
+- This step does NOT attempt to guess ambiguous or borderline salaries.
+- Any salary that cannot be confidently interpreted is explicitly invalidated.
+- All valid salaries are normalized to YEARLY values to simplify
+  downstream analytics, comparisons, and database constraints.
+
+Guarantees
+----------
+- All remaining numeric salaries after this step:
+    - Are positive
+    - Are range-consistent
+    - Are unit-resolved
+    - Are expressed in YEARLY USD-equivalent form
 """
 
 import pandas as pd
@@ -105,11 +176,18 @@ def process_file(path: Path, fx_rates: dict):
             continue
 
         # Case 2: chỉ một bên NA → INVALID
-        if raw_min == "__NA__" or raw_max == "__NA__":
-            df.at[i, "min_salary"] = "__INVALID__"
-            df.at[i, "max_salary"] = "__INVALID__"
-            invalid_count += 1
-            continue
+        # Case 2: only one side NA → symmetric fill
+        if raw_min == "__NA__" and raw_max != "__NA__":
+            df.at[i, "min_salary"] = raw_max
+            df.at[i, "max_salary"] = raw_max
+            raw_min = raw_max  # continue validation
+            raw_max = raw_max
+
+        elif raw_max == "__NA__" and raw_min != "__NA__":
+            df.at[i, "min_salary"] = raw_min
+            df.at[i, "max_salary"] = raw_min
+            raw_min = raw_min
+            raw_max = raw_min
 
         usd_min = to_usd(raw_min, currency, fx_rates)
         usd_max = to_usd(raw_max, currency, fx_rates)

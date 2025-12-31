@@ -11,12 +11,12 @@
   },
 
   "skill_name": {
-    "table": "Skills",
+    "table": "skills",
     "type": "string",
     "description": "Tên kỹ năng đã normalize (vd: Python, SQL, Spark, AWS, Tableau, Power BI)"
   },
   "skill_category": {
-    "table": "Skills",
+    "table": "skills",
     "type": "string",
     "enum": [
       "Programming",
@@ -31,17 +31,17 @@
   },
 
   "company_name": {
-    "table": "Companies",
+    "table": "companies",
     "type": "string",
     "description": "Tên công ty (vd: Google, Amazon, FPT Software, Accenture)"
   },
   "company_size": {
-    "table": "Companies",
+    "table": "companies",
     "type": "string",
     "enum": ["Startup", "Small", "Medium", "Large", "Enterprise"]
   },
   "industry": {
-    "table": "Companies",
+    "table": "companies",
     "type": "string",
     "enum": [
       "Technology",
@@ -63,40 +63,40 @@
   },
 
   "city": {
-    "table": "Locations",
+    "table": "locations",
     "type": "string",
     "description": "Tên thành phố (vd: Ho Chi Minh City, Hanoi, Toronto, New York)"
   },
 
   "country": {
-    "table": "Locations",
+    "table": "locations",
     "type": "string",
     "description": "Tên quốc gia (vd: Vietnam, United States, Canada, India)"
   },
   "country_iso": {
-    "table": "Locations",
+    "table": "locations",
     "type": "string",
     "description": "Mã quốc gia chuẩn ISO 3166-1 alpha-2 (vd: VN, US, CA, DE); dùng để chuẩn hóa và xử lý logic"
   },
 
   "latitude": {
-    "table": "Locations",
+    "table": "locations",
     "type": "decimal",
     "description": "Vĩ độ địa lý, số thực (vd: 10.8231)"
   },
   "longitude": {
-    "table": "Locations",
+    "table": "locations",
     "type": "decimal",
     "description": "Kinh độ địa lý, số thực (vd: 106.6297)"
   },
 
   "population": {
-    "table": "Locations",
+    "table": "locations",
     "type": "int",
     "description": "Dân số thành phố (lấy từ nguồn quốc tế đưa vào)"
   },
   "role_name": {
-    "table": "Role_Names",
+    "table": "role_names",
     "type": "string",
     "enum": [
       "Data Analyst",
@@ -111,70 +111,70 @@
       "Data Manager"
     ]
   },
-  "level": {
-    "table": "Role_Names",
+  "job_level": {
+    "table": "job_levels",
     "type": "string",
     "enum": ["Intern", "Junior", "Mid", "Senior", "Lead"]
   },
 
   "employment_type": {
-    "table": "Role_Names",
+    "table": "job_postings",
     "type": "string",
     "enum": ["Full-time", "Part-time", "Internship", "Temporary"
     ]
   },
 
   "skill_level_required": {
-    "table": "Job_Skills",
+    "table": "job_skills",
     "type": "string",
     "enum": ["Basic", "Intermediate", "Advanced", "Expert"],
     "description": "Mức độ thành thạo kỹ năng được yêu cầu"
   },
 
   "posted_date": {
-    "table": "Job_Postings",
+    "table": "job_postings",
     "type": "date",
     "description": "Ngày đăng job (YYYY-MM-DD)"
   },
 
   "min_salary": {
-    "table": "Job_Postings",
+    "table": "job_postings",
     "type": "decimal",
     "description": "Mức lương tối thiểu (numeric, theo currency)"
   },
   "max_salary": {
-    "table": "Job_Postings",
+    "table": "job_postings",
     "type": "decimal",
     "description": "Mức lương tối đa (numeric, theo currency)"
   },
 
   "currency": {
-    "table": "Job_Postings",
+    "table": "job_postings",
     "type": "string",
     "default": "USD",
     "description": "Đơn vị tiền tệ ISO-3 (vd: USD, EUR, VND, INR)"
   },
 
   "required_exp_years": {
-    "table": "Job_Postings",
+    "table": "job_postings",
     "type": "int",
     "description": "Số năm kinh nghiệm yêu cầu (vd: 0, 1, 3, 5)"
   },
 
   "education_level": {
-    "table": "Job_Postings",
+    "table": "job_postings",
     "type": "string",
     "enum": ["High School", "Bachelor", "Master", "PhD", "Unknown"]
   },
 
   "job_description": {
-    "table": "Job_Postings",
+    "table": "job_postings",
     "type": "text",
     "description": "Mô tả chi tiết job (free text, dài)"
   },
 
   "remote_option": {
-    "table": "Job_Postings",
+    "table": "job_postings",
     "type": "boolean",
     "default": false,
     "description": "Job có cho remote hay không"

@@ -24,13 +24,6 @@ Purpose:
 - Reduce noise from casing, separators, symbols, and variants
 - Guarantee downstream steps operate on clean, comparable values
 
-PIPELINE CONTEXT:
-STEP 2 – Data Processing
-- STEP 2.1 – Column mapping (raw → ERD schema)
-- STEP 2.2 – Description signal extraction (weak signals only)
-- STEP 2.3 – Value normalization (this step)
-- STEP 2.4 – Reference-based geo enrichment (country / ISO / lat-lon)
-
 INPUT:
 - data/data_processing/s2.2_data_description_extracted/*.csv
 

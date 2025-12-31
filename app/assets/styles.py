@@ -34,3 +34,19 @@ def set_global_css():
 def option_menu_css():
     # Tùy chỉnh cho option_menu
     return {"container": {"padding": "5 !important", "background-color": "#FFFFFF", "border-radius": "15px"},}
+
+def container_sidebar_css():
+    body_style = """
+        {   
+            min-height: 69vh !important;
+            max-height: 69vh !important;
+            overflow-y: auto; /* Nếu nội dung dài thì cuộn bên trong khung */
+            overflow-x: auto;
+        }
+
+        /* QUAN TRỌNG: chặn wrap của markdown, để overflow-x hoạt động */
+        p, span, div { 
+            white-space: nowrap;
+        }
+    """
+    return body_style

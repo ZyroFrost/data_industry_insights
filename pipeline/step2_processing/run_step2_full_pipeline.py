@@ -28,9 +28,8 @@ STEPS = {
     5: "2.5_enriching_skill_level_category.py",
     6: "2.6_standardizing_role_name.py",
     7: "2.7_validating_salary_exp.py",
-    8: "2.8_computing_year_cap.py",
-    9: "2.9_combining_data.py",
-    10: "2.10_splitting_tables_erd.py",
+    8: "2.8_combining_data.py",
+    9: "2.9_splitting_tables_erd.py",
 }
 
 # =========================

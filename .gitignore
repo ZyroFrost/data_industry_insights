@@ -11,11 +11,16 @@ venv/
 .streamlit/secrets.toml
 
 # Data files
+## Raw and processed data
 data/data_raw/
 data/data_seeds/
 data/data_processing/
 data/data_processed/
 data/data_reference/geonames_raw/
+
+## Intermediate and final data
+analysis/data/
+dashboard/data/
 
 # OS / Editor
 .DS_Store

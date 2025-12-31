@@ -9,4 +9,8 @@ pip install numpy
 pip install ijson
 pip install datasets
 pip install streamlit_option_menu
+pip install streamlit-extras
+pip install sqlalchemy
+pip install statsmodels
+pip install scikit-learn
 #pip install langdetect

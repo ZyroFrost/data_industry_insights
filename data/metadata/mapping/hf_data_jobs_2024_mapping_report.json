@@ -1,14 +1,15 @@
 {
   "source_file": "hf_data_jobs_2024.csv",
-  "active_source_columns": 14,
+  "active_source_columns": 15,
   "erd_total": 25,
   "erd_missing": [
     "company_size",
+    "industry",
     "country_iso",
     "latitude",
     "longitude",
     "population",
-    "level",
+    "job_level",
     "skill_level_required",
     "min_salary",
     "max_salary",
