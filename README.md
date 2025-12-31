@@ -1,8 +1,462 @@
-# Data Industry Insights
-## Overview
-End-to-end data pipeline and analytics project analyzing global Data job market trends (2020–2025), with web crawlers, cleaned datasets, Power BI dashboard, and Streamlit insights app.
+# Data Industry Insights – Global Data Job Market Analysis (2023–2025)  
+### Phân tích thị trường lao động ngành Data toàn cầu (2023–2025)
 
-## 📁 Project Folder Structure
+---
+
+## 🧭 1. MÔ TẢ VẤN ĐỀ NGHIÊN CỨU
+
+### 1.1. Tổng quan
+Đề tài tập trung vào việc phân tích và khai phá dữ liệu thị trường lao động ngành **Data** trên phạm vi toàn cầu trong giai đoạn **2020–2025**.  
+Thông qua dữ liệu tuyển dụng được thu thập và xử lý từ nhiều nguồn, đồ án nhằm khám phá các mẫu hình (patterns), xu hướng và insight liên quan đến:
+- Nhu cầu tuyển dụng
+- Kỹ năng yêu cầu
+- Mức lương
+- Hình thức làm việc
+- Sự khác biệt giữa các thị trường quốc gia
+
+### 1.2. Mục tiêu nghiên cứu
+- Khám phá dữ liệu (EDA) để hiểu rõ đặc điểm và cấu trúc thị trường việc làm ngành Data  
+- Phân tích phân bố lương, kỹ năng, vai trò công việc và hình thức làm việc  
+- Phân cụm thị trường lao động theo quốc gia bằng thuật toán **KMeans**  
+- Áp dụng **PCA** để giảm chiều dữ liệu và hỗ trợ phân tích trực quan  
+- Cung cấp insight phục vụ:
+  - Định hướng nghề nghiệp
+  - Phân tích thị trường lao động
+  - Hỗ trợ ra quyết định trong tuyển dụng và hoạch định nhân sự
+
+### 1.3. Nguồn dữ liệu
+Dữ liệu được thu thập từ các nguồn tuyển dụng công khai và API, sau đó được xử lý thông qua pipeline gồm các bước:
+- Thu thập dữ liệu  
+- Làm sạch và chuẩn hóa  
+- Enrichment và mapping  
+- Tổng hợp dữ liệu phục vụ phân tích  
+
+Tập dữ liệu ban đầu sau bước thu thập gồm khoảng **1.1 triệu bản ghi**.  
+Sau quá trình lọc, chuẩn hóa và loại bỏ các bản ghi không đầy đủ thông tin cần thiết cho phân tích, tập dữ liệu cuối cùng dùng cho EDA và modeling còn khoảng **513,000 bản ghi**.
+
+Do đặc thù của thị trường dữ liệu tuyển dụng, các bộ dữ liệu lịch sử đầy đủ trong giai đoạn xa thường là **paid datasets**. Vì vậy, tập dữ liệu phân tích trong đồ án này **tập trung chủ yếu vào giai đoạn 2023–2025**, là khoảng thời gian có dữ liệu công khai đầy đủ và đáng tin cậy nhất, phản ánh sát thực trạng thị trường lao động ngành Data hiện nay.
+
+---
+
+## 📊 2. MÔ TẢ DATASET VÀ CÁC CỘT DỮ LIỆU
+
+### 2.1. Dataset chính
+Dataset được sử dụng cho phân tích EDA, PCA và KMeans là tập dữ liệu đã được xử lý hoàn chỉnh từ pipeline.
+
+- Số dòng: ~513,000  
+- Dạng dữ liệu: CSV  
+- Mục đích: Phân tích thị trường lao động ngành Data
+
+### 2.2. Chi tiết các cột dữ liệu
+
+| STT | Tên cột | Kiểu dữ liệu | Vai trò | Mô tả |
+|----:|--------|-------------|--------|------|
+| 1 | skill_name | string | INPUT | Tên kỹ năng |
+| 2 | skill_category | string | INPUT | Nhóm kỹ năng |
+| 3 | certification_required | boolean | INPUT | Yêu cầu chứng chỉ |
+| 4 | company_name | string | INPUT | Tên công ty |
+| 5 | company_size | string | INPUT | Quy mô công ty |
+| 6 | industry | string | INPUT | Ngành nghề công ty |
+| 7 | city | string | INPUT | Thành phố làm việc |
+| 8 | country | string | INPUT | Quốc gia |
+| 9 | country_iso | string | INPUT | Mã ISO quốc gia |
+|10 | latitude | float | Feature | Vĩ độ |
+|11 | longitude | float | Feature | Kinh độ |
+|12 | population | integer | Feature | Dân số |
+|13 | role_name | string | INPUT | Chức danh công việc |
+|14 | level | string | INPUT | Cấp độ nghề nghiệp |
+|15 | department | string | INPUT | Bộ phận |
+|16 | employment_type | string | INPUT | Loại hình làm việc |
+|17 | skill_level_required | string | INPUT | Mức độ yêu cầu kỹ năng |
+|18 | posted_date | date | Feature | Ngày đăng tuyển |
+|19 | min_salary | float | INPUT | Lương tối thiểu |
+|20 | max_salary | float | INPUT | Lương tối đa |
+|21 | currency | string | INPUT | Đơn vị tiền tệ |
+|22 | required_exp_years | float | INPUT | Số năm kinh nghiệm yêu cầu |
+|23 | education_level | string | INPUT | Trình độ học vấn |
+|24 | job_description | string | Feature | Mô tả công việc |
+|25 | remote_option | string | INPUT | Hình thức làm việc (Remote/Onsite/Hybrid) |
+
+**Ghi chú:**  
+Hai cột `__source_id` và `__source_name` được sử dụng nội bộ cho mục đích theo dõi và kiểm soát pipeline xử lý dữ liệu.  
+Các cột này **không được sử dụng trong EDA, PCA hoặc KMeans**, do đó không được liệt kê trong bảng mô tả cột phân tích.
+
+### 2.3. Phân loại Input / Output
+
+**Biến Input (Features):**
+- skill_name, skill_category, certification_required  
+- company_name, company_size, industry  
+- city, country, country_iso  
+- role_name, level, department  
+- employment_type, skill_level_required  
+- min_salary, max_salary, currency  
+- required_exp_years, education_level  
+- remote_option  
+
+**Biến Feature hỗ trợ phân tích:**
+- latitude, longitude, population  
+- posted_date  
+- job_description  
+
+### 2.4. Đặc điểm dữ liệu
+- Loại dữ liệu: Chủ yếu là **categorical**, kết hợp với một số **numerical** (lương, kinh nghiệm, dân số)  
+- Dữ liệu đã được làm sạch, chuẩn hóa và enrich trong pipeline  
+- Dataset đủ lớn và đa dạng để phục vụ EDA, clustering và dimensionality reduction
+
+---
+
+## 🔍 3. TỔNG HỢP KẾT QUẢ 7 BƯỚC EDA CƠ BẢN
+
+Quá trình Phân tích Khám phá Dữ liệu (EDA) được thực hiện trên tập dữ liệu khoảng **513.000 dòng** nhằm mục đích hiểu rõ cấu trúc thị trường lao động ngành dữ liệu toàn cầu.
+
+### 3.1. Thu thập và Tổng quan (Data Overview)
+Dữ liệu bao gồm các thông tin về:
+- Quốc gia  
+- Chức danh  
+- Kỹ năng  
+- Hình thức làm việc  
+- Kinh nghiệm  
+- Lương (USD)
+
+Phân tích tập trung vào các biến chính ảnh hưởng đến **thu nhập** và **nhu cầu tuyển dụng**.
+
+### 3.2. Kiểm tra dữ liệu khuyết thiếu (Data Integrity)
+- Giai đoạn 2021–2022 có số lượng dữ liệu quan sát được thấp do **giới hạn trong khả năng thu thập dữ liệu tuyển dụng công khai**.  
+- Các dữ liệu lịch sử đầy đủ cho giai đoạn này chủ yếu thuộc paid datasets, vì vậy giai đoạn 2021–2022 **không được sử dụng để đánh giá xu hướng thị trường**, mà được xem là **giới hạn của tập dữ liệu**.
+
+### 3.3. Làm sạch và Chuẩn hóa (Data Cleaning)
+- Quy đổi tất cả đơn vị tiền tệ về **USD** để đảm bảo tính đồng nhất.  
+- Nhóm các chức danh công việc vào **10 nhóm chính**  
+  (ví dụ: Data Engineer, Data Analyst, Data Scientist).
+
+### 3.4. Thống kê mô tả (Descriptive Statistics)
+- **Lương trung vị (Median):** 104,022.06 USD  
+- **Lương trung bình (Average):** 143,098.19 USD  
+
+Kết luận: Dữ liệu có phân phối **lệch phải (right-skewed)** do ảnh hưởng của các mức lương cao tại thị trường Mỹ.
+
+### 3.5. Phân tích đơn biến
+- **Thị trường:** Mỹ dẫn đầu với **37.3%** thị phần bài đăng tuyển dụng.  
+- **Kỹ năng:** SQL (**23.2%**) và Python (**22.8%**) là hai kỹ năng “phải có”.  
+- **Hình thức làm việc:** **87.9%** công việc yêu cầu làm việc tại văn phòng (Onsite).
+
+### 3.6. Phân tích mối tương quan giữa các biến
+- **Kinh nghiệm vs Lương:** Tồn tại tương quan thuận mạnh mẽ (kinh nghiệm tăng thì lương tăng).  
+- **Thời gian:** Thị trường có xu hướng chuyển dịch từ nhóm đặc thù (2023) sang thị trường đại chúng (2025).
+
+### 3.7. Phát hiện ngoại lệ (Outliers)
+- Sử dụng **Boxplot** để xác định các mức lương trên **300,000 USD** là ngoại lệ.  
+- Các ngoại lệ chủ yếu rơi vào các vai trò **chuyên gia cao cấp** hoặc **lãnh đạo** tại thị trường Mỹ.
+
+---
+
+## 🎯 4. KẾT QUẢ PHÂN TÍCH GOM CỤM (K-MEANS)
+
+Dựa trên các đặc trưng thị trường như **quy mô**, **kỹ năng** và **hình thức làm việc**, thuật toán **K-Means** được áp dụng để phân nhóm các quốc gia.
+
+### 4.1. Xác định số cụm tối ưu (Elbow Method)
+- Sử dụng phương pháp Elbow để chọn số cụm K=4. Đây là điểm mà tổng bình phương sai lệch trong cụm giảm ổn định, giúp phân loại thị trường rõ rệt nhất.
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/d833945e-e676-4936-b370-6a283189b065"
+       width="659" height="433" />
+</p>
+<p align="center"><b>Hình 4.2.A: Elbow Method for Optimal K</b></p>
+<br>
+  
+### 4.2. Trực quan hóa các cụm trên không gian PCA
+Do dữ liệu có nhiều chiều, **PCA** được sử dụng để giảm chiều và trực quan hóa trên không gian **2D** và **3D**.
+
+#### 4.2.A. Biểu đồ cụm 2D (PC1 vs PC2)
+Giúp quan sát sự phân hóa giữa nhóm thị trường khổng lồ (Mỹ) và các nhóm thị trường truyền thống hoặc linh hoạt.
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/19eeb8fb-f3bb-4678-92e5-6670e6c77f1a"
+       width="577" height="459" />
+</p>
+<p align="center"><b>Hình 4.2.A: Biểu đồ PCA 2D (PC1 vs PC2) – Phân cụm thị trường lao động toàn cầu</b></p>
+<br>
+
+#### 4.2.B. Biểu đồ cụm 3D
+Cung cấp cái nhìn sâu hơn về sự phân tách của các cụm khi bổ sung thêm chiều về sự đa dạng vai trò công việc.
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/6006c307-1884-47e0-a269-d4efcb401d40"
+       width="550" height="471" />
+</p>
+<p align="center"><b>Hình 4.2.B: Biểu đồ PCA 3D – Cấu trúc đa tầng của thị trường lao động toàn cầu</b></p>
+<br>
+
+### 4.3. Đặc điểm các cụm
+- **Cụm 0 (Thị trường dẫn đầu):** Quy mô cực lớn, đa dạng kỹ năng (USA).  
+- **Cụm 1 (Thị trường Onsite):** Tỷ lệ làm việc toàn thời gian và tại văn phòng cao (Châu Âu).  
+- **Cụm 2 (Thị trường linh hoạt):** Ưu tiên Remote, quy mô vừa (Startup).  
+- **Cụm 3 (Thị trường chuyên biệt):** Ít bài đăng hơn nhưng yêu cầu kỹ năng rất cao (Singapore, Mexico).
+
+---
+
+## 🧠 5. PHÂN TÍCH PCA & K-MEANS TRÊN CÁC THÀNH PHẦN CHÍNH (PC)
+
+### 5.1. PCA và Phân cụm KMeans phân tích thị trường toàn cầu
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/3a578878-4ad6-43bb-92c4-2b42fe77bdd9"
+       width="975" height="715" />
+</p>
+<p align="center"><b>Hình 5.1.1: PCA phân tích vị thế thị trường lao động toàn cầu</b></p>
+<br>
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/37070fb8-ba65-44b8-a513-47e1b809811b"
+       width="975" height="715" />
+</p>
+<p align="center"><b>Hình 5.1.2: Phân cụm KMeans Phân khúc thị trường toàn cầu</b></p>
+<br>
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/f351d1b0-7d72-4985-bbbb-dbc15958470b"
+       width="602" height="145" />
+</p>
+<p align="center"><b>Hình 5.1.3: Phân tích đặc trưng của các cụm sau khi chạy KMeans</b></p>
+<br>
+
+#### Ý nghĩa các thành phần chính của PCA:
+
+- **PC1 (Trục hoành - 47.19%)**: Đại diện cho **Quy mô** (Số lượng job và dân số càng lớn thì càng nằm về bên phải).
+- **PC2 (Trục tung - 37.61%)**: Đại diện cho **Mật độ/Độ sôi động** (Mật độ việc làm càng cao thì càng nằm phía trên).
+- **K-means (Phân cụm)**: Tự động nhóm các quốc gia có đặc điểm tương đồng thành 4 phân khúc chiến lược (Khổng lồ, Sôi động, Đang phát triển, Nhỏ) thay vì chỉ nhìn vào từng quốc gia riêng lẻ.
+  
+#### Ý nghĩa kết quả:
+
+- **Nhóm "Outliers đặc biệt" (Như Kiribati)**: Nằm tách biệt hẳn ở phía trên trục PC2, cho thấy đây là thị trường có mật độ việc làm cực kỳ cao bất thường so với quy mô dân số nhỏ bé của họ.
+- **Nhóm "Thị trường Khổng lồ" (Như USA, India)**: Nằm xa về bên phải trục PC1, khẳng định đây là những nơi có khối lượng công việc lớn nhất thế giới.
+- **Nhóm "Thị trường Mới nổi & Nhỏ"**: Tập trung ở góc dưới bên trái, cho thấy cả quy mô và mật độ đều ở mức thấp.
+
+**Kết luận báo cáo**: Phân tích này giúp nhà đầu tư xác định được: Đâu là nơi để tìm kiếm số lượng (Volume - phía bên phải PC1) và đâu là nơi có môi trường cạnh tranh/sôi động cao nhất (Density - phía trên PC2).
+
+### 5.2. PCA và Phân cụm KMeans Phân tích cấu trúc năng lực của phân khúc thị trường chuyên môn
+
+Trong khi mục 5.1.1 cung cấp cái nhìn toàn cảnh về vị thế thị trường toàn cầu (quy mô và mật độ), mục này tập trung mổ xẻ **nhóm thu nhập cao** (lương > 140,000 USD).
+
+Việc này giúp loại bỏ nhiễu từ các thị trường thu nhập thấp và tập trung xác định các nhân tố thực sự tạo nên sự khác biệt giữa các quốc gia hàng đầu.
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/bd88f73e-627e-4f47-a0b1-3c795097b5db"
+       width="975" height="715" />
+</p>
+<p align="center"><b>Hình 5.2.1: PCA phân tích cấu trúc năng lực của thị trường chuyên môn</b></p>
+<br>
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/a19defb2-cbe1-4001-b667-7d5c577d67ac"
+       width="975" height="715" />
+</p>
+<p align="center"><b>Hình 5.2.2: KMeans dựa trên PCA phân tích cấu trúc năng lực của thị trường chuyên môn</b></p>
+<br>
+
+#### Ý nghĩa các thành phần chính của PCA:
+
+- **PC1 (53.9%)**: Đại diện cho **Độ phức tạp kỹ năng**. Tỷ lệ giải thích này cực cao cho thấy sự khác biệt giữa các nước giàu chủ yếu nằm ở số lượng kỹ năng (skill_count) và vai trò (role_count) yêu cầu trong mỗi công việc.
+- **PC2 (24.1%)**: Đại diện cho **Quy mô dân số**, tách biệt các cường quốc đông dân khỏi các thị trường ngách.
+
+#### Ý nghĩa K-means (Phân cụm chiến lược): Thuật toán tự động hóa việc chia nhóm các thị trường cao cấp dựa trên tọa độ năng lực:
+
+- **Cụm dẫn đầu (như India)**: Nằm ở cực phải PC1, đại diện cho thị trường đòi hỏi kỹ năng đa dạng và chuyên sâu nhất.
+- **Cụm thị trường ngách (như Afghanistan, Ukraine, Belgium)**: Nằm ở phía âm của PC1, cho thấy yêu cầu kỹ năng đặc thù hoặc ít phức tạp hơn so với trung bình nhóm cao cấp.
+- **Cụm ổn định (như Switzerland, Netherlands, Singapore)**: Tập trung quanh trục 0, đại diện cho sự cân bằng giữa quy mô và năng lực.
+
+---
+
+## 🧪 6. DATA PIPELINE & XỬ LÝ DỮ LIỆU
+
+### 6.1. Tổng quan pipeline
+
+Pipeline dữ liệu trong đồ án được thiết kế theo hướng end-to-end, xử lý dữ liệu tuyển dụng từ dữ liệu thô (raw) đến dữ liệu sẵn sàng cho phân tích và lưu trữ trong database.
+
+Luồng xử lý chính:
+
+Raw data → Processing → Enrichment → ERD split → Database / Analysis
+
+Pipeline được tổ chức thành các step độc lập, chạy tuần tự, cho phép:
+- Tái chạy từng bước khi cần
+- Kiểm soát lỗi và log theo từng giai đoạn
+- Đảm bảo khả năng tái lập (reproducible)
+
+### 6.2. STEP 0 – Reference & Seed Setup
+
+**Mục tiêu:**  
+Chuẩn bị các dữ liệu tham chiếu (reference) và mapping dùng xuyên suốt pipeline.
+
+**Chức năng chính:**
+- Chuẩn bị dữ liệu địa lý (GeoNames)
+- Tạo bảng tham chiếu thành phố, quốc gia
+- Xây dựng alias cho city name
+- Chuẩn hóa các bảng mapping (skill, role, company size, currency, …)
+
+**Đặc điểm:**
+- Dữ liệu reference tách biệt khỏi dữ liệu job
+- Không phụ thuộc vào dữ liệu crawl
+- Dùng để join và enrich ở các step sau
+
+### 6.3. STEP 1 – Crawling & Raw Data Collection
+
+**Mục tiêu:**  
+Thu thập dữ liệu tuyển dụng từ các nguồn công khai và API.
+
+**Các bước chính:**
+- Crawl dữ liệu từ API (public & authenticated)
+- Thu thập dữ liệu ở dạng JSON / raw text
+- Chuyển đổi JSON → CSV
+- Quét nhanh text để phát hiện tín hiệu sơ bộ
+- Gắn metadata nguồn dữ liệu
+
+**Đặc điểm:**
+- Không làm sạch sâu ở bước này
+- Không suy diễn dữ liệu
+- Giữ nguyên dữ liệu gốc để đảm bảo traceability
+
+
+### 6.4. STEP 2 – Data Processing, Cleaning & Enrichment
+
+Đây là core logic của toàn bộ pipeline.
+
+#### 6.4.1. Mapping & Validation
+- Kiểm tra mapping tên cột
+- Đảm bảo schema thống nhất giữa các nguồn
+- Phát hiện và loại bỏ dữ liệu sai cấu trúc
+
+#### 6.4.2. Extracting Description Signals
+- Trích xuất tín hiệu từ job_description:
+  - city
+  - country
+  - remote_option
+  - salary / experience (nếu thiếu)
+- Chỉ fill khi giá trị gốc bị thiếu (`__NA__`)
+- Không override dữ liệu có sẵn
+
+#### 6.4.3. Normalization
+- Chuẩn hóa:
+  - city
+  - company
+  - employment_type
+  - currency
+  - posted_date
+- Áp dụng rule-based mapping
+- Không dùng ML, không hard-code
+
+#### 6.4.4. Enrichment
+- Suy ra country từ city
+- Enrich skill level & skill category
+- Chuẩn hóa role name về tập role chuẩn
+
+#### 6.4.5. Validation
+- Kiểm tra dữ liệu lương và kinh nghiệm
+- Loại bỏ các giá trị không hợp lệ
+- Giữ nguyên các giá trị thiếu (không suy đoán)
+
+#### 6.4.6. Combining & ERD Splitting
+- Gộp dữ liệu đã xử lý
+- Tách dữ liệu theo mô hình ERD:
+  - job_postings
+  - companies
+  - skills
+  - locations
+  - các bảng quan hệ N–N
+
+### 6.5. STEP 3 – Database Upload
+
+**Mục tiêu:**  
+Đưa dữ liệu đã xử lý vào hệ quản trị cơ sở dữ liệu.
+
+**Hỗ trợ:**
+- Xuất SQL INSERT statements (backup)
+- Load dữ liệu vào PostgreSQL local
+- Load dữ liệu lên Supabase Cloud
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/a850cd47-043c-4e1e-bf69-52ad7189caf0"
+       width="975" height="715" />
+</p>
+<p align="center"><b>Hình 6.5: Data sau khi upload lên cloud Supabase</b></p>
+<br>
+
+**Đặc điểm:**
+- Load theo thứ tự bảng cha → bảng con
+- Đảm bảo toàn vẹn khóa ngoại
+- Có thể chạy độc lập với pipeline xử lý
+
+### 6.6. Nguyên tắc thiết kế pipeline
+
+Pipeline được xây dựng theo các nguyên tắc:
+
+- **Reproducible:** Có thể chạy lại toàn bộ pipeline từ raw data  
+- **No hard-code:** Mọi mapping đều thông qua bảng reference  
+- **Traceable:** Giữ metadata nguồn dữ liệu xuyên suốt pipeline  
+- **Modular:** Mỗi step là một module độc lập
+
+---
+
+## 🗄️ 7. DATABASE DESIGN & ERD
+
+### 7.1. Vai trò của Database trong hệ thống
+
+Database **không trực tiếp tham gia vào các bước xử lý dữ liệu**
+(cleaning, normalization, enrichment),
+nhưng đóng vai trò là **chuẩn thiết kế (target schema)** cho toàn bộ pipeline.
+
+Cấu trúc ERD được xác định **trước khi xây dựng pipeline** và được sử dụng làm cơ sở cho:
+- Mapping cột dữ liệu
+- Chuẩn hóa giá trị
+- Enrichment
+- Tách bảng dữ liệu
+
+Dữ liệu đầu ra của pipeline luôn đảm bảo **tương thích hoàn toàn với schema database**
+trước khi được load vào PostgreSQL.
+
+Sau khi pipeline hoàn tất, **database trở thành nguồn dữ liệu chính (single source of truth)** để:
+- Truy xuất dữ liệu cho các bước phân tích (EDA, PCA, KMeans)
+- Cung cấp dữ liệu chuẩn cho Power BI dashboard
+- Kết nối với Streamlit app để hiển thị và khai thác insight
+
+Toàn bộ phân tích và dashboard **chỉ sử dụng dữ liệu đã được load vào database**,
+đảm bảo tính nhất quán giữa pipeline, phân tích và hiển thị kết quả.
+
+### 7.2. ERD (Entity Relationship Diagram)
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/8e7fde83-e7d1-4a1e-8132-ddddb61e0cf3"
+       width="975" height="715" />
+</p>
+<p align="center"><b>Hình 7.2: Mô hình ERD</b></p>
+<br>
+
+ERD mô tả:
+- Các bảng chính trong hệ thống
+- Quan hệ giữa các bảng
+- Khóa chính, khóa ngoại
+- Các bảng trung gian (many-to-many)
+
+### 7.3. Database Schema & Query
+
+Thư mục `database/` bao gồm:
+- File SQL tạo bảng theo ERD
+- Các index phục vụ truy vấn
+- Một số query mẫu để:
+  - Gộp dữ liệu phân tích
+  - Truy vấn lương
+  - Truy vấn remote / onsite
+  - Phục vụ dashboard và phân tích
+
+Database được sử dụng cho:
+- Lưu trữ dữ liệu đã chuẩn hóa
+- Truy vấn phân tích
+- Kết nối Power BI và Streamlit dashboard
+
+---
+
+## 8. 📁 Project Folder Structure
+Thư mục dự án được tổ chức theo hướng **tách biệt rõ ràng giữa Data Engineering,
+Data Analysis và Visualization**, giúp pipeline dễ bảo trì, mở rộng và tái sử dụng.
+
 ```
 data_industry_insights/
 ├── app/                        # Streamlit UI
@@ -24,129 +478,114 @@ data_industry_insights/
 └── README.md
 ```
 
-## 3. Tổng hợp kết quả 7 bước EDA cơ bản
+- **app/**  
+  Chứa ứng dụng Streamlit phục vụ hiển thị insight, dashboard tương tác và kết nối
+  trực tiếp với database sau khi pipeline hoàn tất.
 
-Quá trình Phân tích Khám phá Dữ liệu (EDA) được thực hiện trên tập dữ liệu khoảng **513.000 dòng** nhằm mục đích hiểu rõ cấu trúc thị trường lao động ngành dữ liệu toàn cầu.
+- **analysis/**  
+  Chứa notebook phân tích EDA, PCA và KMeans trên các tập dữ liệu đã chuẩn hóa  
+  (sample 50K và full ~500K), phục vụ nghiên cứu và báo cáo.
 
-### Bước 1: Thu thập và Tổng quan (Data Overview)
-Dữ liệu bao gồm các thông tin về:
-- Quốc gia  
-- Chức danh  
-- Kỹ năng  
-- Hình thức làm việc  
-- Kinh nghiệm  
-- Lương (USD)
+- **dashboard/**  
+  Chứa Power BI dashboard, sử dụng dữ liệu đã xử lý và tổng hợp để trực quan hóa
+  thị trường lao động ngành Data.
 
-Phân tích tập trung vào các biến chính ảnh hưởng đến **thu nhập** và **nhu cầu tuyển dụng**.
+- **database/**  
+  Chứa thiết kế database bao gồm:
+  - ERD (Entity Relationship Diagram)
+  - Schema SQL
+  - Các câu truy vấn mẫu phục vụ phân tích và dashboard  
+  Database đóng vai trò là chuẩn thiết kế (target schema) và nguồn dữ liệu chính
+  sau pipeline.
 
----
+- **data_seeds/**  
+  Dữ liệu seed và lookup ban đầu, dùng để:
+  - Chuẩn hóa giá trị danh mục
+  - Kiểm tra mapping
+  - Định nghĩa chuẩn dữ liệu  
+  (không phải dữ liệu job thực tế)
 
-### Bước 2: Kiểm tra dữ liệu khuyết thiếu (Data Integrity)
-- Xác định các khoảng trống dữ liệu (data gap) trong giai đoạn **2021–2022**.  
-- Phát hiện sự thiếu minh bạch về lương tại một số thị trường như **Ấn Độ, Pháp và Ý**, nơi mức lương thường được thỏa thuận riêng.
+- **data_unmatched_report/**  
+  Chứa các báo cáo log những giá trị **không match được** trong quá trình pipeline  
+  (ví dụ: city–country không xác định, skill không map được).  
+  Thư mục này dùng để **kiểm tra các mapping còn thiếu và bổ sung lại vào các file mapping**,  
+  nhằm hỗ trợ quá trình **extract và enrichment đạt độ bao phủ tối đa**,  
+  **không dùng cho phân tích hay modeling**.
 
----
+- **metadata/**  
+  Chứa metadata mô tả nguồn dữ liệu, schema JSON gốc và thông tin kỹ thuật của từng
+  nguồn crawl/API, phục vụ traceability và debug pipeline.
+- **pipeline/**  
+  Chứa toàn bộ logic xử lý dữ liệu, được thiết kế theo hướng modular:
+  - **step0_seeds/**: Chuẩn bị seed và dữ liệu tham chiếu  
+  - **step1_crawlers/**: Thu thập dữ liệu từ các nguồn tuyển dụng  
+  - **step2_processing/**: Làm sạch, chuẩn hóa và enrichment dữ liệu  
+  - **step3_database_upload/**: Load dữ liệu đã chuẩn hóa vào PostgreSQL
 
-### Bước 3: Làm sạch và Chuẩn hóa (Data Cleaning)
-- Quy đổi tất cả đơn vị tiền tệ về **USD** để đảm bảo tính đồng nhất.  
-- Nhóm các chức danh công việc vào **10 nhóm chính**  
-  (ví dụ: Data Engineer, Data Analyst, Data Scientist).
+- **.env**  
+  Biến môi trường cho database, API key và cấu hình bảo mật.
 
----
+- **requirements.txt**  
+  Danh sách thư viện Python cần thiết để chạy pipeline và ứng dụng.
 
-### Bước 4: Thống kê mô tả (Descriptive Statistics)
-- **Lương trung vị (Median):** 104,022.06 USD  
-- **Lương trung bình (Average):** 143,098.19 USD  
-
-Kết luận: Dữ liệu có phân phối **lệch phải (right-skewed)** do ảnh hưởng của các mức lương cao tại thị trường Mỹ.
-
----
-
-### Bước 5: Phân tích đơn biến
-- **Thị trường:** Mỹ dẫn đầu với **37.3%** thị phần bài đăng tuyển dụng.  
-- **Kỹ năng:** SQL (**23.2%**) và Python (**22.8%**) là hai kỹ năng “phải có”.  
-- **Hình thức làm việc:** **87.9%** công việc yêu cầu làm việc tại văn phòng (Onsite).
-
----
-
-### Bước 6: Phân tích mối tương quan giữa các biến
-- **Kinh nghiệm vs Lương:** Tồn tại tương quan thuận mạnh mẽ (kinh nghiệm tăng thì lương tăng).  
-- **Thời gian:** Thị trường có xu hướng chuyển dịch từ nhóm đặc thù (2023) sang thị trường đại chúng (2025).
-
----
-
-### Bước 7: Phát hiện ngoại lệ (Outliers)
-- Sử dụng **Boxplot** để xác định các mức lương trên **300,000 USD** là ngoại lệ.  
-- Các ngoại lệ chủ yếu rơi vào các vai trò **chuyên gia cao cấp** hoặc **lãnh đạo** tại thị trường Mỹ.
-
----
-
-## 4. Kết quả phân tích gom cụm (K-Means)
-
-Dựa trên các đặc trưng thị trường như **quy mô**, **kỹ năng** và **hình thức làm việc**, thuật toán **K-Means** được áp dụng để phân nhóm các quốc gia.
-
-### 4.1. Xác định số cụm tối ưu (Elbow Method)
-Phương pháp **Elbow** được sử dụng để lựa chọn số cụm tối ưu.  
-Kết quả cho thấy **K = 4** là điểm mà tổng bình phương sai lệch trong cụm giảm ổn định, giúp phân loại thị trường rõ rệt nhất.
+Cấu trúc này đảm bảo:
+- Pipeline có thể chạy lại (reproducible)
+- Dễ mở rộng thêm nguồn dữ liệu hoặc bước xử lý mới
+- Phân tách rõ ràng giữa xử lý dữ liệu, phân tích và hiển thị
 
 ---
 
-### 4.2. Trực quan hóa các cụm trên không gian PCA
-Do dữ liệu có nhiều chiều, **PCA** được sử dụng để giảm chiều và trực quan hóa trên không gian **2D** và **3D**.
+## 🧩 9. GIỚI HẠN CỦA ĐỒ ÁN (LIMITATIONS)
 
-#### A. Biểu đồ cụm 2D (PC1 vs PC2)
-Giúp quan sát sự phân hóa giữa nhóm thị trường khổng lồ (Mỹ) và các nhóm thị trường truyền thống hoặc linh hoạt.
+Mặc dù tập dữ liệu và pipeline được xây dựng theo hướng chuẩn hóa và có khả năng tái lập, đồ án vẫn tồn tại một số giới hạn khách quan:
 
-> **[Hình 4.2.a – Chèn biểu đồ PCA 2D tại đây]**
+- **Giới hạn dữ liệu lịch sử**:  
+  Dữ liệu tuyển dụng công khai đầy đủ cho giai đoạn trước năm 2023 rất hạn chế.  
+  Phần lớn dữ liệu lịch sử chất lượng cao (2020–2022) thuộc các **paid datasets**, do đó không được sử dụng trong đồ án này.
 
-#### B. Biểu đồ cụm 3D
-Cung cấp cái nhìn sâu hơn về sự phân tách của các cụm khi bổ sung thêm chiều về sự đa dạng vai trò công việc.
+- **Thiên lệch theo khu vực**:  
+  Các thị trường như Hoa Kỳ, châu Âu có độ phủ dữ liệu cao hơn so với các thị trường nhỏ hoặc mới nổi.  
+  Nguyên nhân chủ yếu đến từ **sự khác biệt trong chính sách công khai dữ liệu và mức độ minh bạch thông tin tuyển dụng**.  
+  Các quốc gia phương Tây có khung pháp lý và hạ tầng dữ liệu mở hơn, cho phép công bố rộng rãi thông tin việc làm, trong khi nhiều khu vực khác hạn chế chia sẻ dữ liệu hoặc yêu cầu trả phí để truy cập.
 
-> **[Hình 4.2.b – Chèn biểu đồ PCA 3D tại đây]**
+- **Thiếu minh bạch về lương**:  
+  Tại một số quốc gia, thông tin lương không được công khai đầy đủ và thường ở dạng thỏa thuận, dẫn đến tỷ lệ giá trị thiếu (missing) cao ở các trường `min_salary`, `max_salary`.
 
----
+- **Rule-based processing**:  
+  Pipeline sử dụng hoàn toàn các luật (rule-based) và bảng mapping, không áp dụng Machine Learning cho việc suy đoán dữ liệu, nhằm tránh việc tạo ra giá trị giả (hallucinated data).  
+  Điều này giúp đảm bảo độ tin cậy nhưng có thể làm giảm độ bao phủ trong một số trường hợp đặc biệt.
 
-### 4.3. Đặc điểm các cụm
-- **Cụm 0 (Thị trường dẫn đầu):** Quy mô cực lớn, đa dạng kỹ năng (USA).  
-- **Cụm 1 (Thị trường Onsite):** Tỷ lệ làm việc toàn thời gian và tại văn phòng cao (Châu Âu).  
-- **Cụm 2 (Thị trường linh hoạt):** Ưu tiên Remote, quy mô vừa (Startup).  
-- **Cụm 3 (Thị trường chuyên biệt):** Ít bài đăng hơn nhưng yêu cầu kỹ năng rất cao (Singapore, Mexico).
-
----
-
-## 5. Kết quả phân tích PCA và K-Means trên các thành phần chính (PC)
-
-### 5.1. Kết quả của PCA (Principal Component Analysis)
-
-#### 5.1.1. PCA và phân cụm K-Means phân tích thị trường toàn cầu
-
-> **[Hình 5.1.1 – Biểu đồ PCA phân tích vị thế thị trường toàn cầu]**  
-> **[Hình 5.1.2 – Biểu đồ K-Means phân khúc thị trường toàn cầu]**  
-> **[Hình 5.1.3 – Phân tích đặc trưng các cụm sau K-Means]**
-
-- **PC1 (47.19%)**: Đại diện cho **quy mô** (số lượng việc làm và dân số càng lớn thì càng nằm về bên phải).  
-- **PC2 (37.61%)**: Đại diện cho **mật độ/độ sôi động** (mật độ việc làm càng cao thì càng nằm phía trên).
-
-Thuật toán **K-Means** tự động nhóm các quốc gia có đặc điểm tương đồng thành **4 phân khúc chiến lược**:  
-Khổng lồ, Sôi động, Đang phát triển và Nhỏ.
-
-**Ý nghĩa kết quả:**
-- Nhóm *Outliers đặc biệt* (ví dụ: Kiribati): Nằm tách biệt phía trên trục PC2, thể hiện mật độ việc làm bất thường so với quy mô dân số nhỏ.  
-- Nhóm *Thị trường khổng lồ* (USA, India): Nằm xa về bên phải trục PC1, khẳng định khối lượng việc làm lớn nhất.  
-- Nhóm *Thị trường mới nổi & nhỏ*: Tập trung ở góc dưới bên trái, cho thấy cả quy mô và mật độ đều thấp.
-
-**Kết luận:**  
-Phân tích này giúp xác định:
-- Khu vực có **số lượng cơ hội lớn** (phía bên phải PC1).  
-- Khu vực có **mức độ cạnh tranh và sôi động cao** (phía trên PC2).
+Các giới hạn trên được xem là **đặc điểm của dữ liệu và bối cảnh thu thập**, không phải lỗi trong quá trình xử lý hay thiết kế pipeline.
 
 ---
 
-#### 5.1.2. PCA và phân cụm K-Means phân tích cấu trúc năng lực của phân khúc thị trường chuyên môn
+## 🚀 10. HƯỚNG PHÁT TRIỂN & MỞ RỘNG (FUTURE WORK)
 
-Trong khi mục 5.1.1 cung cấp cái nhìn toàn cảnh về vị thế thị trường toàn cầu (quy mô và mật độ), mục này tập trung mổ xẻ **nhóm thu nhập cao** (lương > 140,000 USD).
+Trong tương lai, đồ án có thể được mở rộng theo các hướng sau:
 
-Việc này giúp loại bỏ nhiễu từ các thị trường thu nhập thấp và tập trung xác định các nhân tố thực sự tạo nên sự khác biệt giữa các quốc gia hàng đầu.
+- **Mở rộng nguồn dữ liệu**:  
+  Tích hợp thêm các **paid datasets (mua dữ liệu)** hoặc hợp tác với các đối tác cung cấp dữ liệu tuyển dụng nhằm cải thiện độ phủ cho giai đoạn lịch sử (2020–2022), đặc biệt đối với các thị trường và thời kỳ không có dữ liệu công khai.
 
-> **[Hình 5.2.1 – Biểu đồ PCA phân tích cấu trúc năng lực thị trường chuyên môn]**  
-> **[Hình 5.2.2 – Chèn hình tại đây]**
+- **Kết hợp Machine Learning có kiểm soát**:  
+  Áp dụng Machine Learning **chỉ cho mục đích phân tích và dự đoán xu hướng tương lai**, ví dụ:
+  - Phân tích xu hướng vai trò và kỹ năng (role & skill trend analysis)
+
+  **Machine Learning không được sử dụng để fill hoặc thay thế dữ liệu gốc** trong pipeline xử lý.  
+  Các kết quả ML (nếu có) chỉ mang tính tham khảo, có thể đi kèm confidence score và **không override dữ liệu thực tế đã thu thập**.
+
+---
+
+## 🏁 KẾT LUẬN
+
+Đồ án **Data Industry Insights** đã xây dựng và triển khai một quy trình phân tích dữ liệu thị trường lao động ngành Data theo hướng **end-to-end**, bao gồm thu thập dữ liệu, xử lý – chuẩn hóa – enrichment theo pipeline rule-based, và các bước phân tích khám phá dữ liệu (EDA), PCA và KMeans.
+
+Thông qua các phương pháp phân tích được áp dụng, đồ án cung cấp một số góc nhìn tổng quan về:
+- Quy mô và mức độ phân bố của thị trường lao động ngành Data  
+- Sự khác biệt giữa các khu vực về vai trò, kỹ năng và hình thức làm việc  
+- Cấu trúc và phân khúc thị trường dựa trên các đặc trưng quan sát được từ dữ liệu  
+
+Kết quả phân tích phản ánh **xu hướng và đặc điểm của tập dữ liệu được thu thập**, đặc biệt trong giai đoạn **2023–2025**, và không nhằm khái quát hóa tuyệt đối cho toàn bộ thị trường lao động toàn cầu.
+
+Pipeline xử lý dữ liệu được thiết kế theo hướng **rule-based, reproducible và bám sát schema database (ERD)**, giúp đảm bảo tính nhất quán giữa dữ liệu đầu vào, dữ liệu phân tích và dữ liệu phục vụ dashboard. Tuy nhiên, pipeline và các kết quả phân tích vẫn phụ thuộc vào phạm vi và chất lượng của nguồn dữ liệu công khai, đặc biệt đối với dữ liệu lịch sử.
+
+Nhìn chung, đồ án đóng vai trò như một **bài toán nghiên cứu và thực hành kỹ thuật dữ liệu**, minh họa cách xây dựng pipeline, tổ chức dữ liệu và áp dụng các phương pháp phân tích để khám phá thị trường lao động ngành Data, đồng thời tạo nền tảng cho các hướng mở rộng và cải thiện trong tương lai.
