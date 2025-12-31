@@ -1,5 +1,5 @@
-# Data Industry Insights – Global Data Job Market Analysis (2023–2025)  
-### Phân tích thị trường lao động ngành Data toàn cầu (2023–2025)
+# Data Industry Insights
+### Phân tích thị trường lao động ngành Data toàn cầu
 
 ---
 
@@ -77,10 +77,6 @@ Dataset được sử dụng cho phân tích EDA, PCA và KMeans là tập dữ 
 |24 | job_description | string | Feature | Mô tả công việc |
 |25 | remote_option | string | INPUT | Hình thức làm việc (Remote/Onsite/Hybrid) |
 
-**Ghi chú:**  
-Hai cột `__source_id` và `__source_name` được sử dụng nội bộ cho mục đích theo dõi và kiểm soát pipeline xử lý dữ liệu.  
-Các cột này **không được sử dụng trong EDA, PCA hoặc KMeans**, do đó không được liệt kê trong bảng mô tả cột phân tích.
-
 ### 2.3. Phân loại Input / Output
 
 **Biến Input (Features):**
@@ -102,6 +98,21 @@ Các cột này **không được sử dụng trong EDA, PCA hoặc KMeans**, do
 - Loại dữ liệu: Chủ yếu là **categorical**, kết hợp với một số **numerical** (lương, kinh nghiệm, dân số)  
 - Dữ liệu đã được làm sạch, chuẩn hóa và enrich trong pipeline  
 - Dataset đủ lớn và đa dạng để phục vụ EDA, clustering và dimensionality reduction
+
+### 2.5. Các cột được sử dụng cho phân tích và modeling
+
+Trong các bước phân tích EDA, KMeans và PCA, **không phải toàn bộ các cột INPUT đều được đưa trực tiếp vào mô hình**.
+
+Các cột được sử dụng làm **đầu vào phân tích (analysis features)** bao gồm:
+- Thông tin thị trường: `country`, `city`
+- Thông tin vai trò: `role_name`, `level`, `department`
+- Thông tin kỹ năng: `skill_name`, `skill_category`, `skill_level_required`
+- Thông tin hình thức làm việc: `employment_type`, `remote_option`
+- Thông tin thu nhập: `min_salary`, `max_salary`
+- Thông tin quy mô hỗ trợ phân tích: `population`, `posted_date`
+
+Các cột như `job_description`, `latitude`, `longitude` được sử dụng cho **enrichment, mô tả và trực quan hóa**,  
+**không được đưa trực tiếp vào các thuật toán KMeans hoặc PCA**.
 
 ---
 
@@ -154,7 +165,22 @@ Kết luận: Dữ liệu có phân phối **lệch phải (right-skewed)** do �
 
 Dựa trên các đặc trưng thị trường như **quy mô**, **kỹ năng** và **hình thức làm việc**, thuật toán **K-Means** được áp dụng để phân nhóm các quốc gia.
 
-### 4.1. Xác định số cụm tối ưu (Elbow Method)
+### 4.1. Các biến đầu vào cho KMeans
+
+Phân tích gom cụm KMeans được thực hiện ở **cấp độ quốc gia**, với dữ liệu đã được tổng hợp và chuẩn hóa từ dataset gốc.
+
+Các biến đầu vào chính cho KMeans bao gồm:
+- Số lượng bài đăng tuyển dụng theo quốc gia
+- Số lượng vai trò công việc (role diversity)
+- Số lượng kỹ năng yêu cầu (skill diversity)
+- Phân bố hình thức làm việc (remote / onsite)
+- Thông tin thu nhập tổng hợp (salary statistics)
+- Thông tin quy mô hỗ trợ phân tích như dân số (`population`)
+
+Các biến này phản ánh **quy mô**, **mức độ đa dạng kỹ năng** và **đặc điểm làm việc** của từng thị trường,
+tạo cơ sở cho việc phân nhóm các quốc gia có đặc điểm thị trường lao động tương đồng.
+
+### 4.2. Xác định số cụm tối ưu (Elbow Method)
 - Sử dụng phương pháp Elbow để chọn số cụm K=4. Đây là điểm mà tổng bình phương sai lệch trong cụm giảm ổn định, giúp phân loại thị trường rõ rệt nhất.
 <p align="center">
   <img src="https://github.com/user-attachments/assets/d833945e-e676-4936-b370-6a283189b065"
@@ -163,10 +189,10 @@ Dựa trên các đặc trưng thị trường như **quy mô**, **kỹ năng** 
 <p align="center"><b>Hình 4.2.A: Elbow Method for Optimal K</b></p>
 <br>
   
-### 4.2. Trực quan hóa các cụm trên không gian PCA
+### 4.3. Trực quan hóa các cụm trên không gian PCA
 Do dữ liệu có nhiều chiều, **PCA** được sử dụng để giảm chiều và trực quan hóa trên không gian **2D** và **3D**.
 
-#### 4.2.A. Biểu đồ cụm 2D (PC1 vs PC2)
+#### 4.3.A. Biểu đồ cụm 2D (PC1 vs PC2)
 Giúp quan sát sự phân hóa giữa nhóm thị trường khổng lồ (Mỹ) và các nhóm thị trường truyền thống hoặc linh hoạt.
 
 <p align="center">
@@ -176,7 +202,7 @@ Giúp quan sát sự phân hóa giữa nhóm thị trường khổng lồ (Mỹ)
 <p align="center"><b>Hình 4.2.A: Biểu đồ PCA 2D (PC1 vs PC2) – Phân cụm thị trường lao động toàn cầu</b></p>
 <br>
 
-#### 4.2.B. Biểu đồ cụm 3D
+#### 4.3.B. Biểu đồ cụm 3D
 Cung cấp cái nhìn sâu hơn về sự phân tách của các cụm khi bổ sung thêm chiều về sự đa dạng vai trò công việc.
 
 <p align="center">
@@ -186,7 +212,7 @@ Cung cấp cái nhìn sâu hơn về sự phân tách của các cụm khi bổ 
 <p align="center"><b>Hình 4.2.B: Biểu đồ PCA 3D – Cấu trúc đa tầng của thị trường lao động toàn cầu</b></p>
 <br>
 
-### 4.3. Đặc điểm các cụm
+### 4.4. Đặc điểm các cụm
 - **Cụm 0 (Thị trường dẫn đầu):** Quy mô cực lớn, đa dạng kỹ năng (USA).  
 - **Cụm 1 (Thị trường Onsite):** Tỷ lệ làm việc toàn thời gian và tại văn phòng cao (Châu Âu).  
 - **Cụm 2 (Thị trường linh hoạt):** Ưu tiên Remote, quy mô vừa (Startup).  
@@ -319,8 +345,69 @@ Thu thập dữ liệu tuyển dụng từ các nguồn công khai và API.
 
 Đây là core logic của toàn bộ pipeline.
 
+### 6.4.0. Mapping Tool & Schema Alignment (Column Mapper App)
+
+Trước khi thực hiện các bước extract, normalization và enrichment,
+pipeline sử dụng **công cụ hỗ trợ mapping cột (Column Mapping App)** để đảm bảo
+dữ liệu đầu vào từ các nguồn khác nhau được **chuẩn hóa về cùng một schema logic**.
+
+**Chức năng chính của mapping tool:**
+- Hiển thị toàn bộ các cột gốc từ từng nguồn dữ liệu
+- Cho phép ánh xạ thủ công các cột nguồn → cột chuẩn của pipeline
+- Kiểm tra và phát hiện:
+  - Cột thiếu
+  - Cột trùng nghĩa nhưng khác tên
+  - Cột không cần thiết cho pipeline
+- Đảm bảo các cột bắt buộc cho pipeline đều tồn tại trước khi xử lý tiếp
+
+**Hỗ trợ mapping bán tự động (semi-automatic):**
+- Tool tự động **gợi ý mapping cho khoảng 80–90% các cột phổ biến**
+  dựa trên:
+  - Tên cột
+  - Pattern thường gặp
+  - Mapping đã dùng trước đó
+- Người dùng chỉ cần:
+  - Xác nhận mapping đúng
+  - Điều chỉnh các cột đặc thù hoặc không match
+- Cách tiếp cận này giúp:
+  - Giảm đáng kể thời gian mapping thủ công
+  - Giữ được kiểm soát con người
+  - Tránh sai lệch do tự động hoàn toàn
+
+**Vai trò trong pipeline:**
+- Là bước trung gian giữa raw/extracted data và processing logic
+- Giảm rủi ro lỗi schema khi chạy pipeline tự động
+- Tránh hard-code tên cột trong code xử lý
+- Đảm bảo dữ liệu đầu vào tuân thủ chuẩn thiết kế (target schema)
+
+Công cụ này được xây dựng dưới dạng **Streamlit app** và nằm trong thư mục `pipeline/tools/`,
+được sử dụng khi:
+- Thêm nguồn dữ liệu mới
+- Thay đổi schema từ phía nhà cung cấp dữ liệu
+- Kiểm tra nhanh tính tương thích của dữ liệu trước khi chạy pipeline đầy đủ
+
+Sau khi mapping được xác nhận, dữ liệu được xử lý theo đúng thứ tự:
+- **Mapping & Validation**: Kiểm tra file nguồn đã được mapping đầy đủ và schema thống nhất.
+- **Extracting Description Signals**: Chỉ thực hiện sau khi mapping hoàn tất; trích xuất tín hiệu từ `job_description` khi dữ liệu gốc bị thiếu, không override.
+- **Normalization & Enrichment**: Chuẩn hóa và làm giàu dữ liệu theo các rule-based mapping trước khi sang các bước tiếp theo.
+<br>
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/ad0460db-c7d0-4dc7-9fe3-1085bb378f5c"
+       width="975" height="715" />
+</p>
+<p align="center"><b>Hình 6.4.0.A: Ảnh minh họa app CSV Column Mapping Tool (ảnh 1)</b></p>
+<br>
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/237d668d-228a-42d6-a3f2-fa2809630f18"
+       width="975" height="715" />
+</p>
+<p align="center"><b>Hình 6.4.0.B: Ảnh minh họa app CSV Column Mapping Tool (ảnh 2)</b></p>
+<br>
+
 #### 6.4.1. Mapping & Validation
-- Kiểm tra mapping tên cột
+- Kiểm tra mapping tên cột (so sánh số lượng file gốc với file đã được mapping)
 - Đảm bảo schema thống nhất giữa các nguồn
 - Phát hiện và loại bỏ dữ liệu sai cấu trúc
 
@@ -457,25 +544,104 @@ Database được sử dụng cho:
 Thư mục dự án được tổ chức theo hướng **tách biệt rõ ràng giữa Data Engineering,
 Data Analysis và Visualization**, giúp pipeline dễ bảo trì, mở rộng và tái sử dụng.
 
-```
+## 📁 Project Folder Structure
+```bash
 data_industry_insights/
-├── app/                        # Streamlit UI
-├── analysis/                   # EDA, PCA, clustering (50K & 500K)
-├── dashboard/                  # Power BI dashboard
-├── database/                   # Database schema & ERD
-├── data/
-│   ├── data_raw/               # Raw collected data
-│   ├── data_processing/        # Intermediate processed data
-│   ├── data_processed/         # Final analytics-ready data
-│   └── data_reference/         # Reference & mapping tables
-├── pipeline/
-│   ├── step0_seeds/            # Seed & reference preparation
-│   ├── step1_crawlers/         # API data collection
-│   ├── step2_processing/       # Cleaning, normalization & enrichment
-│   └── step3_database_upload   # Load data into PostgreSQL
-├── .env
-├── requirements.txt
-└── README.md
+│
+├── app/                                            # STREAMLIT UI / GIAO DIỆN STREAMLIT
+│   ├── assets/                                     # Static assets (CSS, images, icons) / Tài nguyên tĩnh (CSS, hình ảnh, icon)
+│   ├── pages/                                      # Multi-page Streamlit views / Các trang giao diện Streamlit
+│   └── app.py                                      # Streamlit app entry point / File khởi chạy ứng dụng Streamlit
+│
+├── analysis/                                       # EXPLORATORY ANALYSIS & MANUAL VALIDATION / PHÂN TÍCH KHÁM PHÁ VÀ KIỂM TRA DỮ LIỆU THỦ CÔNG
+│   ├── data/                                       # Analysis-specific datasets / Dữ liệu dùng riêng cho phân tích
+│   ├── 1_dataset_construction.py                   # Dataset inspection & construction (output to analysis/data/) / Kiểm tra và xây dựng tập dữ liệu phân tích 
+│   ├── 2_analysis_EDA_PCA_50k.ipynb                # EDA & PCA on sampled data (50K rows) / EDA & PCA trên tập mẫu 50K
+│   ├── 3_analysis_EDA_PCA_500k.ipynb               # EDA & PCA on full dataset (~500K rows) / EDA & PCA trên tập đầy đủ (~500K)
+│   └── 4_splitting_tables_from_analysis.py         # Split filtered analysis data into ERD tables (output to dashboard/data/) / Tách dữ liệu đã lọc từ analysis thành các bảng theo ERD
+│
+├── dashboard/                                      # POWER BI DASHBOARD & REPORTS / DASHBOARD VÀ BÁO CÁO POWER BI
+│   ├── data/                                       # Curated datasets for dashboard (from analysis 500K) / Dữ liệu chọn lọc cho dashboard (từ PCA 500K)
+│   └── Data_Industry_Insights.pbix                 # Power BI report file / File báo cáo Power BI
+│
+├── database/                                       # DATABASE SCHEMA & ERD (STRUCTURE ONLY) / SCHEMA VÀ MÔ HÌNH ERD (CHỈ CHỨA CẤU TRÚC)
+│   ├── queries/                                    # SQL queries for analysis & validation / Câu lệnh SQL phục vụ phân tích và kiểm tra 
+│   ├── schema.sql                                  # Database schema (DDL) / File tạo bảng và ràng buộc database
+│   ├── ERD.png                                     # Entity Relationship Diagram / Sơ đồ quan hệ thực thể (ERD)
+│   └── README.md                                   # Database structure and usage notes / Giải thích cấu trúc và cách dùng database
+│
+├── data/                                           # DATA FILES ONLY / FOLDER CHỈ CHỨA DATA (JSON VÀ CSV SAU KHI LẤY TỪ PIPELINE)
+│   ├── data_raw/                                   # Raw scraped data (API / HTML / JSON) / Dữ liệu thô (file JSON lấy trực tiếp từ web)
+│   └── data_processing/                            # Transformed intermediate data / Dữ liệu chuyển đổi (file CSV sau khi parse từ JSON)
+│   │   ├── data_extracted/                         # Extracted raw fields / Dữ liệu trích xuất trực tiếp từ JSON
+│   │   ├── data_mapped/                            # Mapped & standardized data / Dữ liệu đã map và chuẩn hóa cột
+│   │   └── data_enriched/                          # After augmentation & derivation / Dữ liệu đã được làm giàu (bổ sung, suy diễn thêm thuộc tính)
+│   │ 
+│   ├── data_processed/                             # Cleaned final data for analytics / Dữ liệu cuối để phân tích (đã merge và tách bảng)
+|   |
+|   ├── data_reference/                             # Reference & dimension data / Dữ liệu tham chiếu và dimension
+|   |   ├── geonames_raw/                           # Raw GeoNames reference data / Dữ liệu địa lý gốc từ GeoNames
+|   |   ├── cities.csv                              # City reference table / Bảng tham chiếu thành phố (tọa độ, dân số)
+|   |   ├── city_alias_reference.csv                # City alias mapping / Ánh xạ alias tên thành phố
+|   |   ├── countries.csv                           # Country reference table / Bảng tham chiếu quốc gia (ISO, tên)
+|   |   ├── company_size_mapping.csv                # Company size mapping / Mapping quy mô công ty
+|   |   ├── currency_mapping.csv                    # Currency normalization mapping / Mapping chuẩn hóa tiền tệ
+|   |   ├── education_level_mapping.csv             # Education level mapping / Mapping trình độ học vấn
+|   |   ├── employment_type_mapping.csv             # Employment type mapping / Mapping loại hình làm việc
+|   |   ├── industry_mapping.csv                    # Industry mapping / Mapping ngành nghề
+|   |   ├── job_level_mapping.csv                   # Job level mapping / Mapping cấp độ nghề nghiệp
+|   |   ├── role_names_mapping.csv                  # Role name standardization / Mapping chuẩn hóa tên chức danh
+|   |   ├── skill_mapping.csv                       # Skill name mapping / Mapping chuẩn hóa tên kỹ năng
+|   |   ├── skill_level_mapping.csv                 # Skill level mapping / Mapping mức độ kỹ năng
+|   |   └── unmatched_city_country.csv              # Unmatched geo values log / Log city–country không match
+│   │
+│   ├── data_seeds/                                 # Lookup & reference data / Dữ liệu chuẩn tra cứu (không dùng cho pipeline chính)
+│   └── metadata/                                   # Schema & source documentation / Tài liệu mô tả cấu trúc JSON của từng nguồn web
+│
+├── pipeline/                                       # DATA PIPELINE LOGIC / LOGIC XỬ LÝ DỮ LIỆU (FOLDER CHỈ CHỨA CODE PYTHON)
+│   ├── step0_seeds/                                # Seed & reference preparation / Chuẩn bị dữ liệu seed và dữ liệu tham chiếu
+│   │   ├── 0.0_build_seed_data.py                  # Build initial seed datasets (not used in pipeline) / Tạo dữ liệu ban đầu để tham khảo tên cột, ko dùng trong pipeline
+│   │   ├── 0.1_setup_geonames_reference.py         # Setup GeoNames-based geo reference / Chuẩn bị dữ liệu địa lý chuẩn từ GeoNames
+│   │   ├── 0.2_build_city_alias_reference.py       # Build city alias mapping / Tạo bảng ánh xạ alias cho tên thành phố
+│   │   └── 0.3_build_geo_reference.py              # Build unified geo reference / Hợp nhất dữ liệu địa lý thành reference cuối
+│   │
+│   ├── step1_crawlers/                             # Data collection via APIs (and experiments) / Thu thập dữ liệu qua API (và thử nghiệm)
+│   │   ├── api/                                    # API-based data collection / Thu thập dữ liệu qua API
+│   │   │   ├── authenticated/                      # Authenticated APIs (require API keys) / API cần xác thực
+│   │   │   └── public/                             # Public APIs / API công khai
+│   │   │
+│   │   ├── scrape/                                 # HTML web scraping - Experimental scraping attempts (not used in final pipeline) / Đã tetst nhưng data rác ko dùng được
+│   │   │   └── protected/                          # Anti-bot sites (testing only) / Web có chống bot
+│   │   │
+│   │   ├── 1.1_run_step1_full_clawlers.py          # Central crawler entry point invoking site-specific crawlers / Điểm vào trung tâm gọi các crawler riêng cho từng website
+│   │   └── 1.2_dataset_hugging.py                  # Hugging Face dataset downloader (primary data source) / Tải dataset từ Hugging Face (nguồn dữ liệu trực tiếp)
+│   │
+│   ├── step2_processing/                           # Data cleaning, normalization & enrichment / Làm sạch, chuẩn hóa và làm giàu dữ liệu
+│   │   ├── 2.1_mapping_check.py                    # Validate column mapping / Kiểm tra và xác nhận mapping tên cột
+│   │   ├── 2.2_extracting_description_signals.py   # Extract signals from job descriptions / Trích xuất tín hiệu từ mô tả công việc
+│   │   ├── 2.3_normalizing_values.py               # Normalize categorical values / Chuẩn hóa giá trị danh mục (city, company, type, currency, ...)
+│   │   ├── 2.4_enriching_country_from_city.py      # Enrich country data from city / Suy ra quốc gia từ thông tin thành phố
+│   │   ├── 2.5_enriching_skill_level_category.py   # Enrich skill level & category / Làm giàu cấp độ và phân loại kỹ năng
+│   │   ├── 2.6_standardizing_role_name.py          # Standardize job role names / Chuẩn hóa tên chức danh công việc
+│   │   ├── 2.7_validating_salary_exp.py            # Validate salary & experience fields / Kiểm tra và làm sạch dữ liệu lương và kinh nghiệm
+│   │   ├── 2.8_combining_data.py                   # Combine processed datasets / Gộp dữ liệu sau xử lý
+│   │   ├── 2.9_splitting_tables_erd.py             # Split data into ERD tables / Tách dữ liệu theo cấu trúc ERD
+│   │   └── 2.10_run_step2_full_pipeline.py         # Run full STEP 2 pipeline / Chạy toàn bộ pipeline STEP 2
+│   │
+│   ├── step3_database_upload                       # Load processed data into databases / Đưa dữ liệu đã xử lý vào database
+│   │   ├── 3.0_export_csv_to_postgresql.py         # Export SQL INSERT statements (for backup) / Xuất file SQL chứa câu lệnh INSERT dữ liệu (lưu backup)
+│   │   ├── 3.1_loading_data_to_local_postgre.py    # Load data into local PostgreSQL / Nạp dữ liệu vào PostgreSQL local
+│   │   └── 3.2_loading_data_to_supabase.py         # Load data into Supabase Cloud PostgreSQL / Nạp dữ liệu lên Supabase Cloud
+│   │
+│   ├── tools/                                      # Helper tools for data processing / Công cụ hỗ trợ chạy thủ công
+│   │   └── column_mapper_app.py                    # Column mapping and normalization tool / App hỗ trợ map và kiểm tra tên cột
+│   │
+│   └── pipeline_app.py                             # Pipeline entry point / File chạy chính
+│ 
+├── .env                                    
+├── .gitignore                  
+├── README.md
+└── requirements.txt
 ```
 
 - **app/**  
@@ -535,7 +701,92 @@ Cấu trúc này đảm bảo:
 
 ---
 
-## 🧩 9. GIỚI HẠN CỦA ĐỒ ÁN (LIMITATIONS)
+## ⚙️ 9. INSTALLATION & SETUP
+
+### 9.1. Yêu cầu hệ thống
+- Python >= 3.9
+- PostgreSQL (local) **hoặc** Supabase PostgreSQL
+- Git
+- (Tuỳ chọn) Power BI Desktop
+- (Tuỳ chọn) Streamlit
+
+### 9.2. Clone project
+```bash
+git clone https://github.com/<your-username>/data_industry_insights.git
+cd data_industry_insights
+```
+
+### 9.3. Tạo môi trường ảo và cài thư viện
+```
+python -m venv .venv
+source .venv/bin/activate        # Linux / Mac
+.venv\Scripts\activate           # Windows
+```
+
+```
+pip install -r requirements.txt
+```
+
+### 9.4. Cấu hình biến môi trường
+```
+# Database
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=data_industry_insights
+DB_USER=postgres
+DB_PASSWORD=your_password
+
+# Supabase (optional)
+SUPABASE_HOST=...
+SUPABASE_PORT=...
+SUPABASE_DB=...
+SUPABASE_USER=...
+SUPABASE_PASSWORD=...
+
+# API keys (if any)
+API_KEY_1=...
+```
+
+### 9.5. Chạy pipeline dữ liệu
+
+#### STEP 0 – Chuẩn bị reference & seed
+```
+python pipeline/step0_seeds/0.1_setup_geonames_reference.py
+python pipeline/step0_seeds/0.2_build_city_alias_reference.py
+python pipeline/step0_seeds/0.3_build_geo_reference.py
+```
+
+#### STEP 1 – Crawling dữ liệu
+```
+python pipeline/step1_crawlers/run_step1.py
+1.1_run_step1_full_clawlers.py
+1.2_dataset_hugging.py
+```
+
+#### STEP 3 – Load dữ liệu vào database
+```
+python pipeline/step3_database_upload/3.1_loading_data_to_local_postgre.py
+# hoặc
+python pipeline/step3_database_upload/3.2_loading_data_to_supabase.py
+```
+
+### 9.6. Run Analysis & Dashboard
+
+**Jupyter Notebook**
+```bash
+jupyter notebook analysis/
+```
+
+**Streamlit Application**
+```bash
+streamlit run app/app.py
+```
+
+After pipeline completion, the database becomes the **single source of truth** for analysis, dashboarding and application usage.
+
+---
+
+## 🧩 10. GIỚI HẠN CỦA ĐỒ ÁN (LIMITATIONS)
 
 Mặc dù tập dữ liệu và pipeline được xây dựng theo hướng chuẩn hóa và có khả năng tái lập, đồ án vẫn tồn tại một số giới hạn khách quan:
 
@@ -559,7 +810,7 @@ Các giới hạn trên được xem là **đặc điểm của dữ liệu và 
 
 ---
 
-## 🚀 10. HƯỚNG PHÁT TRIỂN & MỞ RỘNG (FUTURE WORK)
+## 🚀 11. HƯỚNG PHÁT TRIỂN & MỞ RỘNG (FUTURE WORK)
 
 Trong tương lai, đồ án có thể được mở rộng theo các hướng sau:
 
