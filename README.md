@@ -386,6 +386,9 @@ Công cụ này được xây dựng dưới dạng **Streamlit app** và nằm 
 - Thay đổi schema từ phía nhà cung cấp dữ liệu
 - Kiểm tra nhanh tính tương thích của dữ liệu trước khi chạy pipeline đầy đủ
 
+**Lưu ý:**
+Ứng dụng Streamlit được phát triển để chạy trong môi trường nội bộ. Việc không triển khai public nhằm đảm bảo yêu cầu về mạng và bảo mật dữ liệu.
+
 Sau khi mapping được xác nhận, dữ liệu được xử lý theo đúng thứ tự:
 - **Mapping & Validation**: Kiểm tra file nguồn đã được mapping đầy đủ và schema thống nhất.
 - **Extracting Description Signals**: Chỉ thực hiện sau khi mapping hoàn tất; trích xuất tín hiệu từ `job_description` khi dữ liệu gốc bị thiếu, không override.
