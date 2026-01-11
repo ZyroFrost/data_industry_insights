@@ -25,9 +25,9 @@ RAW_DIR.mkdir(parents=True, exist_ok=True)
 META_DIR = ROOT / "data" / "metadata" / "source"
 META_DIR.mkdir(parents=True, exist_ok=True)
 
-PROC_DIR = ROOT / "data" / "data_processing" / "s1_data_extracted"
+PROC_DIR = ROOT / "data" / "data_processing" / "s2.0_data_extracted"
 PROC_DIR.mkdir(parents=True, exist_ok=True)
-
+output_path = PROC_DIR / "remoteok_datajobs_2025.csv"
 
 # ==========================================================
 # 1) Download ALL RemoteOK job history
@@ -125,7 +125,6 @@ def filter_data_jobs(raw):
 # ==========================================================
 def save_csv(rows):
     df = pd.DataFrame(rows)
-    output_path = PROC_DIR / "remoteok_datajobs_2025.csv"
     df.to_csv(output_path, index=False, encoding="utf-8-sig")
 
     print(f"💾 Saved CSV → {output_path}")
@@ -138,7 +137,7 @@ def save_csv(rows):
 def save_metadata(total, csv_path):
     meta = {
         "crawler": "remoteok",
-        "description": "RemoteOK global job board — filtered for Data/AI/ML jobs (2018–2025).",
+        "description": "RemoteOK global job board — filtered for Data/AI/ML jobs 2025.",
         "fields": {
             "id": "string",
             "date": "string",
@@ -161,14 +160,31 @@ def save_metadata(total, csv_path):
 
     print(f"📝 Metadata saved → {meta_file}")
 
+# ==========================================================
+# ENTRY FUNCTION — USED BY PIPELINE CONTROLLER
+# ==========================================================
+def run_remoteok_datajobs_crawler():
+    print("=" * 60)
+    print("🚀 START REMOTEOK DATAJOBS CRAWLER (2020–2025)")
+    print("=" * 60)
 
-# ==========================================================
-# MAIN RUN
-# ==========================================================
-if __name__ == "__main__":
     raw = download_remoteok()
     data_jobs = filter_data_jobs(raw)
     csv_path = save_csv(data_jobs)
     save_metadata(len(data_jobs), csv_path)
 
-    print("\n🎉 DONE. RemoteOK Data Job History (2018–2025) ready!")
+    print("=" * 60)
+    print("✅ END REMOTEOK DATAJOBS CRAWLER")
+    print("=" * 60)
+
+    return {
+        "crawler": "remoteok_datajobs",
+        "total_records": len(data_jobs),
+        "output_csv": str(csv_path),
+    }
+
+# ==========================================================
+# MAIN RUN
+# ==========================================================
+if __name__ == "__main__":
+    run_remoteok_datajobs_crawler()

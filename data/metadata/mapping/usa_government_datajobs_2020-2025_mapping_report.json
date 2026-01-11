@@ -1,0 +1,21 @@
+{
+  "source_file": "usa_government_datajobs_2020-2025.csv",
+  "active_source_columns": 9,
+  "erd_total": 25,
+  "erd_missing": [
+    "skill_name",
+    "skill_category",
+    "company_size",
+    "industry",
+    "country_iso",
+    "latitude",
+    "longitude",
+    "population",
+    "job_level",
+    "employment_type",
+    "skill_level_required",
+    "currency",
+    "required_exp_years",
+    "education_level"
+  ]
+}

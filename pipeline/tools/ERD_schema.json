@@ -7,7 +7,7 @@
   "__source_name": {
     "table": "_meta",
     "type": "string",
-    "description": "Original source file name"
+    "description": "Original source file name (auto generated)"
   },
 
   "skill_name": {
@@ -175,8 +175,7 @@
 
   "remote_option": {
     "table": "job_postings",
-    "type": "boolean",
-    "default": false,
-    "description": "Job có cho remote hay không"
+    "type": "string",
+    "enum": ["Onsite | Hybrid | Remote"]
   }
 }

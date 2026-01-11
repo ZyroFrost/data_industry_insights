@@ -1,4 +1,6 @@
-CREATE DATABASE data_industry_insights if not exists;
+-- =====================================================
+-- DATA INDUSTRY INSIGHTS – POSTGRESQL SCHEMA (CHECK-BASED)
+-- =====================================================
 
 -- =========================
 -- SKILLS
@@ -25,8 +27,8 @@ CREATE TABLE skills (
 CREATE TABLE companies (
     company_id SERIAL PRIMARY KEY,
     company_name TEXT NOT NULL,
-    size VARCHAR(50)
-        CHECK (size IN (
+    company_size VARCHAR(50)
+        CHECK (company_size IN (
             'Startup',
             'Small',
             'Medium',
@@ -61,8 +63,8 @@ CREATE TABLE locations (
     city VARCHAR(100),
     country VARCHAR(100),
     country_iso CHAR(2),
-    latitude DECIMAL(10,8),
-    longitude DECIMAL(11,8),
+    latitude DECIMAL(10, 8),
+    longitude DECIMAL(11, 8),
     population INT,
     CONSTRAINT uq_locations UNIQUE (city, country, country_iso)
 );
@@ -101,9 +103,9 @@ CREATE TABLE job_postings (
 
     posted_date DATE,
 
-    min_salary DECIMAL(10,2),
-    max_salary DECIMAL(10,2),
-    currency CHAR(3),
+    min_salary DECIMAL(10, 2),
+    max_salary DECIMAL(10, 2),
+    currency CHAR(10),
 
     required_exp_years INT,
 
@@ -133,7 +135,7 @@ CREATE TABLE job_postings (
         ))
 );
 
--- indexes cho job_postings
+-- INDEXES (analytics-focused)
 CREATE INDEX idx_job_postings_posted_date ON job_postings(posted_date);
 CREATE INDEX idx_job_postings_company_id ON job_postings(company_id);
 CREATE INDEX idx_job_postings_location_id ON job_postings(location_id);
@@ -168,13 +170,17 @@ CREATE TABLE job_roles (
 -- =========================
 CREATE TABLE job_levels (
     job_id INT NOT NULL REFERENCES job_postings(job_id),
-    level VARCHAR(20)
-        CHECK (level IN (
+    job_level VARCHAR(20)
+        CHECK (job_level IN (
             'Intern',
             'Junior',
             'Mid',
             'Senior',
             'Lead'
         )),
-    PRIMARY KEY (job_id, level)
+    PRIMARY KEY (job_id, job_level)
 );
+
+-- =====================================================
+-- END OF SCHEMA
+-- =====================================================

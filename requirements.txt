@@ -12,5 +12,11 @@ pip install streamlit_option_menu
 pip install streamlit-extras
 pip install sqlalchemy
 pip install statsmodels
+pip install ipykernel
 pip install scikit-learn
-#pip install langdetect
+pip install plotly
+pip install matplotlib
+pip install seaborn
+pip install nbformat
+pip install nbconvert
+pip install xgboost

@@ -8,12 +8,15 @@ WITH base AS (
             THEN 1 ELSE 0 
         END AS has_salary
     FROM job_postings j
+    INNER JOIN locations l
+        ON j.location_id = l.location_id
     WHERE posted_date IS NOT NULL
       AND job_id IS NOT NULL
       AND employment_type IS NOT NULL
-      AND location_id IS NOT NULL
       AND remote_option IS NOT NULL
       AND company_id IS NOT NULL
+      AND l.country IS NOT NULL
+      AND l.country_iso IS NOT NULL
 ),
 ranked AS (
     SELECT *,
@@ -25,4 +28,4 @@ ranked AS (
 )
 SELECT *
 FROM ranked
-WHERE rn <= 230000;
+WHERE rn <= 250000;

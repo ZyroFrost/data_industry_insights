@@ -1,8 +1,9 @@
 {
   "source_file": "DS_AI_ML_jobs_2020-2025.csv",
-  "active_source_columns": 10,
+  "active_source_columns": 11,
   "erd_total": 25,
   "erd_missing": [
+    "__source_id",
     "skill_name",
     "skill_category",
     "company_name",
@@ -14,8 +15,6 @@
     "population",
     "job_level",
     "skill_level_required",
-    "min_salary",
-    "max_salary",
     "education_level",
     "job_description"
   ]

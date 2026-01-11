@@ -1,15 +1,13 @@
---SET search_path TO data_industry_insights, public;
-
 CREATE VIEW merge_all_tables AS
 SELECT 
     jp.job_id,
     c.company_name,
     c.industry,
-    c.size AS company_size,
+    c.company_size,
     l.city,
     l.country,
     rn.role_name,
-    jl.level AS career_level,
+    jl.job_level,
     s.skill_name,
     js.skill_level_required,
     jp.posted_date,

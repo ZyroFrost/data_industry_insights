@@ -28,8 +28,9 @@ ROOT = Path(__file__).resolve().parents[4]
 RAW_DIR = ROOT / "data" / "data_raw" / "usa_government_datajobs_2020-2025"
 RAW_DIR.mkdir(parents=True, exist_ok=True)
 
-PROC_DIR = ROOT / "data" / "data_processing" / "s1_data_extracted"
+PROC_DIR = ROOT / "data" / "data_processing" / "s2.0_data_extracted"
 PROC_DIR.mkdir(parents=True, exist_ok=True)
+csv_path = PROC_DIR / "usa_government_datajobs_2020-2025.csv"
 
 META_DIR = ROOT / "data" / "metadata" / "usa_government_datajobs"
 META_DIR.mkdir(parents=True, exist_ok=True)
@@ -106,7 +107,9 @@ def crawl_usajobs_for_year(year):
 # =========================================================
 # FULL CRAWL
 # =========================================================
-def crawl_usa_jobs_all_years(start=2020, end=2025):
+def run_usa_datajobs_crawler():
+    start = 2020
+    end = 2025
     all_jobs = []
 
     for year in range(start, end + 1):
@@ -121,7 +124,6 @@ def crawl_usa_jobs_all_years(start=2020, end=2025):
 
     df = pd.DataFrame(all_jobs)
 
-    csv_path = PROC_DIR / "usa_government_datajobs.csv"
     df.to_csv(csv_path, index=False, encoding="utf-8-sig")
 
     print(f"\n🎉 DONE: Saved CSV → {csv_path}")
@@ -142,9 +144,8 @@ def crawl_usa_jobs_all_years(start=2020, end=2025):
 
     print(f"📝 Metadata saved → {meta_file}")
 
-
 # =========================================================
 # ENTRY POINT
 # =========================================================
 if __name__ == "__main__":
-    crawl_usa_jobs_all_years()
+    run_usa_datajobs_crawler()

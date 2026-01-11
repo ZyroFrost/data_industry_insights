@@ -1,0 +1,14 @@
+{
+  "crawler": "usa_government_datajobs",
+  "description": "USA Jobs Federal Portal — Data/AI/ML Jobs 2020–2025.",
+  "total_records": 2691,
+  "raw_years": [
+    "2020.json",
+    "2021.json",
+    "2022.json",
+    "2023.json",
+    "2024.json",
+    "2025.json"
+  ],
+  "crawl_timestamp": "2026-01-03T03:43:41.856081"
+}

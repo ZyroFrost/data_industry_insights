@@ -17,7 +17,7 @@ SELECT
     -- Companies (4 columns)
     c.company_id,
     c.company_name,
-    c.size AS company_size,
+    c.company_size,
     c.industry,
 
     -- Locations (7 columns)
@@ -38,7 +38,7 @@ SELECT
     ) AS roles_list,
 
     (
-        SELECT STRING_AGG(jl.level, '; ' ORDER BY jl.level)
+        SELECT STRING_AGG(jl.job_level, '; ' ORDER BY jl.job_level)
         FROM job_levels jl
         WHERE jl.job_id = f.job_id
     ) AS levels_list,

@@ -21,8 +21,8 @@ APP_ID = os.getenv("ADZUNA_APP_ID")
 
 ROOT = Path(__file__).resolve().parents[4]
 
-RAW_DIR = ROOT / "data" / "data_raw" / "adzuna_datajobs"
-PROCESSING_DIR = ROOT / "data" / "data_processing" / "s1_data_extracted"
+RAW_DIR = ROOT / "data" / "data_raw" / "adzuna_datajobs_2025"
+PROCESSING_DIR = ROOT / "data" / "data_processing" / "s2.0_data_extracted"
 METADATA_DIR = ROOT / "data" / "metadata" / "source"
 
 RAW_DIR.mkdir(parents=True, exist_ok=True)
@@ -39,28 +39,29 @@ COUNTRIES_40 = [
     "lt","lv","ee","jp","kr","hk","ar","cl","co","vn"
 ]
 
-
 # =========================================================
 # 2. CHECK IF COUNTRY ALREADY CRAWLED
 # =========================================================
-def country_finished(country):
+def get_existing_pages_and_jobs(country):
     """
-    Check if country has been crawled before
-    AND load existing job_ids for dedup
+    Return:
+    - existing_pages: set[int]
+    - job_ids: set[str]
     """
     country_dir = RAW_DIR / country
 
     if not country_dir.exists():
-        return False, set()
+        return set(), set()
 
     json_files = list(country_dir.glob("page_*.json"))
-    if not json_files:
-        return False, set()
-
+    existing_pages = set()
     job_ids = set()
 
     for file in json_files:
         try:
+            page_num = int(file.stem.split("_")[1])
+            existing_pages.add(page_num)
+
             data = json.loads(file.read_text(encoding="utf-8"))
             for job in data.get("results", []):
                 job_id = job.get("id")
@@ -69,7 +70,7 @@ def country_finished(country):
         except Exception:
             continue
 
-    return True, job_ids
+    return existing_pages, job_ids
 
 # =========================================================
 # 3. CRAWL 1 COUNTRY
@@ -79,15 +80,22 @@ def crawl_country(country, pages=200):
     save_dir = RAW_DIR / country
     save_dir.mkdir(exist_ok=True)
 
-    has_raw, existing_job_ids = country_finished(country)
+    # 🔹 Load existing pages + job ids
+    existing_pages, existing_job_ids = get_existing_pages_and_jobs(country)
     seen_job_ids = set(existing_job_ids)
 
-    if has_raw:
-        print(f"   ↳ Found existing raw data: {len(existing_job_ids)} jobs")
+    if existing_pages:
+        start_page = max(existing_pages) + 1
+        if start_page > pages:
+            print(f"   ✔ Already crawled full {pages} pages. Skipping.")
+            return
+        print(f"   ↳ Resume crawl from page {start_page}")
     else:
+        start_page = 1
         print("   ↳ First time crawling this country")
 
-    for page in range(1, pages + 1):
+    # 🔹 Crawl pages
+    for page in range(start_page, pages + 1):
         url = f"https://api.adzuna.com/v1/api/jobs/{country}/search/{page}"
         params = {
             "app_id": APP_ID,
@@ -100,7 +108,7 @@ def crawl_country(country, pages=200):
         try:
             data = response.json()
         except Exception:
-            print(f"❌ ERROR at page {page}, country {country}")
+            print(f"❌ ERROR parsing JSON at page {page}, country {country}")
             break
 
         results = data.get("results", [])
@@ -214,29 +222,24 @@ def flatten_all_countries():
     print(f"\n🎉 DONE! Saved {len(df)} rows → {output_path}")
     return df
 
-
 # =========================================================
 # 7. FULL GLOBAL RUN
 # =========================================================
-def run_global_pipeline():
+def run_adzuna_datajobs_crawler():
     print("\n🚀 RUNNING GLOBAL ADZUNA PIPELINE...\n")
 
     for country in COUNTRIES_40:
-        if country_finished(country):
-            print(f"⏭ {country} skipped.")
-        else:
-            crawl_country(country)
+        crawl_country(country)
 
     flatten_all_countries()
 
     print("\n🎯 GLOBAL PIPELINE FINISHED — DATA READY.\n")
 
-
 # =========================================================
 # ENTRY POINT
 # =========================================================
 if __name__ == "__main__":
-    #run_global_pipeline()
-    print(RAW_DIR)
-    print(PROCESSING_DIR)
-    print(METADATA_DIR)
+    run_adzuna_datajobs_crawler()
+    # print(RAW_DIR)
+    # print(PROCESSING_DIR)
+    # print(METADATA_DIR)

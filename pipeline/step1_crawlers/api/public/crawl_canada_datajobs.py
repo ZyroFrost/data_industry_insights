@@ -40,7 +40,8 @@ ROOT = Path(__file__).resolve().parents[4]
 
 RAW_DIR = ROOT / "data" / "data_raw" / "canada_government_datajobs_2020-2025"
 META_DIR = ROOT / "data" / "metadata" / "source"
-PROC_DIR = ROOT / "data" / "data_processing" / "s1_data_extracted"
+PROC_DIR = ROOT / "data" / "data_processing" / "s2.0_data_extracted"
+csv_file = PROC_DIR / "canada_government_datajobs_2020-2025.csv"
 
 RAW_DIR.mkdir(parents=True, exist_ok=True)
 META_DIR.mkdir(parents=True, exist_ok=True)
@@ -197,7 +198,6 @@ def save_csv(final_records):
     df["last_update"] = pd.to_datetime(df["last_update"], errors="coerce")
     df = df.sort_values("last_update", ascending=False)
 
-    csv_file = PROC_DIR / "canada_government_datajobs_2020-2025.csv"
     df.to_csv(csv_file, index=False, encoding="utf-8-sig")
 
     print(f"\n✔ Saved CSV → {csv_file}")
@@ -208,7 +208,7 @@ def save_csv(final_records):
 # ==================================================================
 # 9. MAIN ENTRY POINT (bạn đang thiếu)
 # ==================================================================
-def run_pipeline():
+def run_canada_datajobs_crawler():
     print("\n🚀 RUNNING CANADA CRAWLER...\n")
 
     final_records, all_raw_json = run_crawler()
@@ -224,4 +224,4 @@ def run_pipeline():
 # RUN
 # ==================================================================
 if __name__ == "__main__":
-    run_pipeline()
+    run_canada_datajobs_crawler()
